@@ -1,97 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>IHCC World Hand Cricket Rankings</title>
-
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
-body{background:#eef2f7;color:#172033}
-header{background:linear-gradient(135deg,#06152f,#0b3d91,#1261c9);color:#fff;text-align:center;padding:28px 15px}
-header h1{font-size:26px;margin-bottom:7px}
-header p{opacity:.9;margin:4px}
-nav{position:sticky;top:0;z-index:100;display:flex;overflow-x:auto;background:#fff;box-shadow:0 2px 10px #0002}
-nav button{flex:1;min-width:115px;padding:15px 8px;border:0;background:#fff;font-weight:bold;color:#475569;cursor:pointer}
+*{box-sizing:border-box}
+body{margin:0;background:#eef2f7;color:#172033;font:15px Arial,sans-serif}
+header{background:linear-gradient(135deg,#06152f,#0b3d91,#1261c9);color:white;text-align:center;padding:25px 12px}
+header h1{font-size:25px;margin:0 0 8px}
+header p{margin:5px}
+nav{display:flex;overflow-x:auto;position:sticky;top:0;z-index:5;background:white;box-shadow:0 2px 10px #0002}
+nav button{flex:1;min-width:105px;padding:14px 8px;border:0;background:white;color:#475569;font-weight:bold}
 nav button.active{color:#0b3d91;border-bottom:3px solid #0b3d91}
-.page{display:none;max-width:1150px;margin:auto;padding:18px}
+.page{display:none;max-width:1100px;margin:auto;padding:16px}
 .page.active{display:block}
-.card{background:#fff;border-radius:16px;padding:18px;margin-bottom:18px;box-shadow:0 3px 15px #00000012}
-.card h2{color:#0b3d91;margin-bottom:15px}
-.card h3{color:#0b3d91;margin:18px 0 12px}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.stat{background:#f8fafc;border-radius:12px;padding:16px;text-align:center}
-.stat b{display:block;font-size:23px;color:#0b3d91;margin-bottom:5px}
-.notice{background:#eff6ff;border-left:4px solid #2563eb;padding:14px;border-radius:8px;margin-bottom:15px;line-height:1.6}
-table{width:100%;border-collapse:collapse;min-width:650px}
-.tableWrap{overflow-x:auto}
-th{background:#0b3d91;color:#fff;padding:11px 7px}
-td{padding:11px 7px;border-bottom:1px solid #e2e8f0;text-align:center}
+.card{background:white;border-radius:14px;padding:17px;margin-bottom:16px;box-shadow:0 3px 15px #0001}
+.card h2{color:#0b3d91;margin:0 0 15px}
+.card h3{margin:18px 0 10px;color:#123a76}
+.stats,.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.stat,.member,.team,.tcard{background:#f8fafc;border:1px solid #e2e8f0;border-radius:11px;padding:14px}
+.stat{text-align:center}
+.stat b{display:block;font-size:22px;color:#0b3d91;margin-bottom:4px}
+.notice{background:#eff6ff;border-left:4px solid #2563eb;border-radius:8px;padding:13px;line-height:1.6;margin-bottom:14px}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{background:#0b3d91;color:white;padding:10px 7px}
+td{padding:10px 7px;border-bottom:1px solid #e2e8f0;text-align:center}
 td:nth-child(2){text-align:left;font-weight:bold}
-tr:hover{background:#f8fafc}
-.rank1{background:#fffbea}.rank2{background:#f8fafc}.rank3{background:#fff7ed}
-.rating{font-weight:bold}.points{font-weight:bold;color:#0b3d91}
-.teamGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
-.teamBox,.memberBox{background:#f8fafc;padding:16px;border-radius:12px;border:1px solid #e2e8f0}
-.memberBox{background:linear-gradient(135deg,#f8fafc,#eef5ff)}
-.memberNumber{font-size:13px;color:#64748b;margin-bottom:7px}
-.tournamentGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
-.tournamentCard{background:#f8fafc;border:1px solid #dbe3ee;border-radius:14px;padding:18px;cursor:pointer;transition:.2s}
-.tournamentCard:hover{transform:translateY(-3px);box-shadow:0 5px 18px #0002}
-.tournamentCard h3{margin:0 0 8px}
-.tournamentCard p{color:#64748b;font-size:14px;line-height:1.5}
-.match{border:1px solid #e2e8f0;border-radius:12px;padding:14px;margin-bottom:10px;background:#fff;line-height:1.6}
-.match strong{color:#0b3d91}
-.win{color:#15803d;font-weight:bold}.nr{color:#64748b;font-weight:bold}
-.championBox{background:linear-gradient(135deg,#fff7d6,#fff);border:1px solid #f1d477;border-radius:14px;padding:18px;text-align:center;margin-bottom:18px}
-.championBox .big{font-size:24px;font-weight:bold;margin:8px 0}
-.btn{width:100%;padding:13px;border:0;border-radius:9px;background:#0b3d91;color:#fff;font-weight:bold;font-size:16px;cursor:pointer}
-.btn.red{background:#dc2626}
-.result{background:#eff6ff;border-left:4px solid #2563eb;padding:14px;border-radius:8px;margin-top:14px;line-height:1.7}
-input,select{width:100%;padding:12px;margin:6px 0 13px;border:1px solid #cbd5e1;border-radius:9px;background:#fff;font-size:15px}
-label{font-weight:bold;display:block;margin-top:8px}
+.rank1{background:#fffbea}
+.rank2{background:#f8fafc}
+.rank3{background:#fff7ed}
+.rating{font-weight:bold}
+.points{font-weight:bold;color:#0b3d91}
+input,select{width:100%;padding:11px;margin:6px 0 12px;border:1px solid #cbd5e1;border-radius:8px;background:white;font-size:15px}
+label{display:block;font-weight:bold;margin-top:8px}
+.btn{width:100%;padding:12px;border:0;border-radius:8px;background:#0b3d91;color:white;font-weight:bold;cursor:pointer}
+.red{background:#dc2626}
 .small{font-size:13px;color:#64748b}
-.changeUp{color:#15803d;font-weight:bold}.changeDown{color:#dc2626;font-weight:bold}
-.backBtn{margin-bottom:15px}
-
-.admin-only-tab,.admin-only-page,.admin-only-control{display:none!important}
-
-#adminAccessButton{
-position:fixed;right:14px;bottom:14px;z-index:9998;
-border:0;border-radius:999px;padding:10px 14px;
-font-weight:700;cursor:pointer;background:#111827;color:#fff;
-box-shadow:0 5px 18px #0004
-}
-#adminModal{
-display:none;position:fixed;inset:0;z-index:10000;
-background:#000b;align-items:center;justify-content:center
-}
-.admin-box{
-width:min(92vw,370px);background:#fff;color:#111;
-padding:24px;border-radius:18px;box-shadow:0 20px 60px #0006
-}
-.admin-box h2{margin-bottom:8px;color:#111}
-.admin-box p{color:#666;margin-bottom:15px}
-#adminPinInput{
-width:100%;padding:12px;font-size:18px;
-border:1px solid #ccc;border-radius:10px;text-align:center
-}
-.adminBtn{
-width:100%;margin-top:10px;padding:12px;border:0;
-border-radius:10px;background:#111827;color:#fff;
-font-weight:700;cursor:pointer
-}
-#adminError{min-height:20px;margin-top:8px;color:#c62828;font-size:14px}
-
-@media(max-width:700px){
-.stats{grid-template-columns:repeat(2,1fr)}
-header h1{font-size:21px}
-th,td{font-size:12px;padding:9px 5px}
-.page{padding:12px}
-}
+.match{border:1px solid #e2e8f0;border-radius:10px;padding:13px;margin:10px 0;line-height:1.65}
+.tcard{cursor:pointer;background:linear-gradient(145deg,#fff,#f5f8ff)}
+.tcard h3{margin:0 0 8px}
+.champ{background:linear-gradient(135deg,#082b65,#1261c9);color:white;text-align:center;border-radius:12px;padding:18px;line-height:1.8;margin:12px 0}
+.champ strong{display:block;font-size:24px}
+.win{color:#15803d;font-weight:bold}
+.nr{color:#64748b;font-weight:bold}
+.member small{color:#64748b}
+.member b{display:block;margin-top:5px}
+.only-admin{display:none!important}
+body.admin .only-admin{display:block!important}
+#adminButton{position:fixed;right:14px;bottom:14px;z-index:20;border:0;border-radius:24px;padding:11px 15px;background:#111827;color:white;font-weight:bold;box-shadow:0 5px 18px #0004}
+#modal{display:none;position:fixed;inset:0;background:#000b;z-index:30;align-items:center;justify-content:center}
+.modalbox{background:white;padding:22px;border-radius:14px;width:min(90%,360px)}
+#error{color:#c62828;min-height:20px;margin-top:8px}
+@media(max-width:650px){th,td{font-size:12px;padding:8px 4px}.stats{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
-
 <body>
 
 <header>
@@ -102,67 +66,29 @@ th,td{font-size:12px;padding:9px 5px}
 </header>
 
 <nav>
-
-<button class="tab active" onclick="openPage('rankings',this)">
-🏆 Rankings
-</button>
-
-<button class="tab" onclick="openPage('teams',this)">
-🌍 Teams
-</button>
-
-<button class="tab" onclick="openPage('tournaments',this)">
-🏆 Tournaments
-</button>
-
-<button id="matchTab" class="tab admin-only-tab"
-onclick="openPage('match',this)">
-🏏 Enter Match
-</button>
-
-<button class="tab" onclick="openPage('rules',this)">
-📖 Elo Rules
-</button>
-
+<button class="tab active" onclick="openPage('rankings',this)">🏆 Rankings</button>
+<button class="tab" onclick="openPage('teams',this)">🌍 Teams</button>
+<button id="matchTab" class="tab" style="display:none" onclick="openPage('match',this)">🔐 Admin</button>
+<button class="tab" onclick="openPage('tournaments',this)">🏆 Tournaments</button>
+<button class="tab" onclick="openPage('rules',this)">📖 Elo Rules</button>
 </nav>
 
-
-<!-- RANKINGS -->
-
 <section id="rankings" class="page active">
-
 <div class="card">
 <h2>🏆 Hand Cricket World Rankings</h2>
-
 <div class="stats">
-
-<div class="stat"><b>20</b>Teams</div>
-
-<div class="stat">
-<b id="matchCount">0</b>New Matches
-</div>
-
-<div class="stat">
-<b id="highestElo">1228.29</b>Highest Elo
-</div>
-
-<div class="stat">
-<b id="worldNo1">🇮🇳 India</b>World No. 1
-</div>
-
+<div class="stat"><b id="teamCount">20</b>Teams</div>
+<div class="stat"><b id="matchCount">0</b>New Matches</div>
+<div class="stat"><b id="highestElo">1228.29</b>Highest Elo</div>
+<div class="stat"><b id="champion">India</b>#1 Team</div>
 </div>
 </div>
 
 <div class="notice">
-<b>Official IHCC baseline</b><br>
-The displayed Elo ratings and Ranking Points are the official
-20-team baseline. Future matches use <b>K = 32</b>.
+<b>Official baseline:</b> Elo ratings and Ranking Points are loaded from the IHCC ranking table. New match results update ratings and points.
 </div>
 
-<div class="card">
-<h2>📊 World Rankings</h2>
-
-<div class="tableWrap">
+<div class="card tablewrap">
 <table>
 <thead>
 <tr>
@@ -175,19 +101,11 @@ The displayed Elo ratings and Ranking Points are the official
 <tbody id="rankingTable"></tbody>
 </table>
 </div>
-
-</div>
 </section>
 
-
-<!-- TEAMS -->
-
 <section id="teams" class="page">
-
 <div class="card">
-
 <h2>🏛️ IHCC Membership</h2>
-
 <div class="notice">
 <b>International Hand Cricket Council (IHCC (ICC))</b><br>
 President: R. Pugazhenthi<br>
@@ -195,68 +113,28 @@ Established: 2025
 </div>
 
 <h3>🏛️ Full Members — 8</h3>
-<div class="teamGrid" id="fullMembers"></div>
+<div class="grid" id="fullMembers"></div>
 
 <h3>🌐 Associate Members — 10</h3>
-<div class="teamGrid" id="associateMembers"></div>
-
+<div class="grid" id="associateMembers"></div>
 </div>
 
 <div class="card">
-
 <h2>🌍 World Ranking Teams — 20</h2>
-<div class="teamGrid" id="worldTeams"></div>
-
+<div class="grid" id="worldTeams"></div>
 </div>
-
 </section>
 
-
-<!-- TOURNAMENTS -->
-
-<section id="tournaments" class="page">
-
-<div id="tournamentList">
-
+<section id="match" class="page only-admin">
 <div class="card">
-<h2>🏆 IHCC Tournament Archive</h2>
-<div class="tournamentGrid" id="tournamentGrid"></div>
-</div>
-
-</div>
-
-<div id="tournamentDetails" style="display:none">
-
-<div class="card">
-
-<button class="btn backBtn" onclick="showTournamentList()">
-← Back to Tournament Archive
-</button>
-
-<div id="tournamentOutput"></div>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- ADMIN MATCH -->
-
-<section id="match" class="page admin-only-page">
-
-<div class="card">
-
-<h2>🏏 Enter New Match</h2>
+<h2>🔐 Admin — Enter Match</h2>
 
 <div class="notice">
-<b>Elo K-Factor = 32</b><br>
-Win = 1, Loss = 0, No Result = no Elo change.
+Elo K-Factor = 32. Enter the Ranking Points earned by each team for this match.
 </div>
 
-<label>Tournament Name</label>
-<input id="tournamentName" placeholder="Example: Major World Cup 3">
+<label>Tournament / Series Name</label>
+<input id="tournament" placeholder="Example: Bilateral Series or Major World Cup 3">
 
 <label>Team 1</label>
 <select id="team1"></select>
@@ -264,7 +142,7 @@ Win = 1, Loss = 0, No Result = no Elo change.
 <label>Team 2</label>
 <select id="team2"></select>
 
-<label>Result</label>
+<label>Match Result</label>
 <select id="matchResult">
 <option value="team1">Team 1 Won</option>
 <option value="team2">Team 2 Won</option>
@@ -277,142 +155,109 @@ Win = 1, Loss = 0, No Result = no Elo change.
 <label>Team 2 Ranking Points Earned</label>
 <input id="points2" type="number" min="0" value="0">
 
-<button class="btn" onclick="submitMatch()">
-⚡ Calculate & Save Match
-</button>
-
+<button class="btn" onclick="submitMatch()">⚡ Calculate &amp; Save Match</button>
 <div id="calculation"></div>
-
 </div>
 
 <div class="card">
-<h2>📜 New Match History</h2>
+<h2>📜 Match History</h2>
 <div id="history"></div>
 </div>
 
 <div class="card">
-<button class="btn red" onclick="resetData()">
-🔄 Reset New Match Data
-</button>
+<h2>Admin Data</h2>
+<p class="small">Reset clears newly entered match data and restores the official baseline.</p>
+<button class="btn red" onclick="resetData()">Reset New Match Data</button>
 </div>
-
 </section>
 
+<section id="tournaments" class="page">
+<div id="tournamentList" class="card">
+<h2>🏆 IHCC Tournament Archive</h2>
+<p class="small">Select a tournament to see its points tables, match results and knockout stage.</p>
+<div class="grid" id="tournamentGrid"></div>
+</div>
 
-<!-- RULES -->
+<div id="tournamentDetails" class="card" style="display:none">
+<button class="btn" onclick="showTournamentList()">← Back to Tournament Archive</button>
+<div id="tournamentOutput"></div>
+</div>
+</section>
 
 <section id="rules" class="page">
-
 <div class="card">
-
 <h2>📖 IHCC Elo System</h2>
-
-<p><b>Starting Elo:</b> 1000</p>
 <p><b>K-Factor:</b> 32</p>
-
+<p><b>Expected score:</b> E = 1 ÷ (1 + 10<sup>(Opponent Rating − Your Rating) ÷ 400</sup>)</p>
+<p><b>New rating:</b> Old Rating + 32 × (Actual Result − Expected Result)</p>
+<p>Win = 1; Loss = 0; No Result = no Elo change.</p>
 <br>
-
-<p><b>Expected Score</b></p>
-
-<div class="notice">
-E = 1 ÷ (1 + 10<sup>(Opponent Rating − Your Rating) ÷ 400</sup>)
+<p>Ranking Points and Elo Rating are separate values.</p>
 </div>
-
-<p><b>New Rating</b></p>
-
-<div class="notice">
-New Rating = Old Rating + 32 × (Actual Score − Expected Score)
-</div>
-
-<p><b>Win:</b> 1</p>
-<p><b>Loss:</b> 0</p>
-<p><b>No Result:</b> no Elo change</p>
-
-</div>
-
 </section>
 
+<button id="adminButton">🔐 Admin</button>
+
+<div id="modal">
+<div class="modalbox">
+<h2>🔐 Admin Access</h2>
+<p class="small">Enter the IHCC Admin PIN to access match entry and reset controls.</p>
+<input id="pin" type="password" placeholder="Enter Admin PIN" autocomplete="off">
+<button id="unlock" class="btn">Unlock Admin</button>
+<button id="lock" class="btn" style="margin-top:8px;display:none">Lock Admin</button>
+<div id="error"></div>
+</div>
+</div>
 
 <script>
-
-/* =========================================================
-   OFFICIAL 20 TEAM BASELINE
-========================================================= */
-
 const K=32;
 
 const officialTeams=[
-
-{name:"India",flag:"🇮🇳",rating:1228.29,points:584},
-{name:"Australia",flag:"🇦🇺",rating:1074.95,points:310},
-{name:"Nepal",flag:"🇳🇵",rating:1055.37,points:80},
-{name:"New Zealand",flag:"🇳🇿",rating:1053.95,points:299},
-{name:"UAE",flag:"🇦🇪",rating:1036.45,points:60},
-{name:"Oman",flag:"🇴🇲",rating:1035.32,points:20},
-{name:"Netherlands",flag:"🇳🇱",rating:1003.77,points:319},
-{name:"Zimbabwe",flag:"🇿🇼",rating:991.73,points:333},
-{name:"Namibia",flag:"🇳🇦",rating:990.93,points:20},
-{name:"Scotland",flag:"🏴",rating:980.15,points:40},
-{name:"England",flag:"🏴",rating:979.49,points:202},
-{name:"Bangladesh",flag:"🇧🇩",rating:975.53,points:120},
-{name:"Pakistan",flag:"🇵🇰",rating:972.08,points:272},
-{name:"Ireland",flag:"🇮🇪",rating:959.94,points:40},
-{name:"Canada",flag:"🇨🇦",rating:953.08,points:20},
-{name:"Afghanistan",flag:"🇦🇫",rating:951.27,points:293},
-{name:"Sri Lanka",flag:"🇱🇰",rating:950.79,points:80},
-{name:"South Africa",flag:"🇿🇦",rating:950.74,points:226},
-{name:"USA",flag:"🇺🇸",rating:933.64,points:40},
-{name:"West Indies",flag:"🌴",rating:921.52,points:186}
-
+{"name":"India","flag":"🇮🇳","rating":1228.29,"points":584},
+{"name":"Australia","flag":"🇦🇺","rating":1074.95,"points":310},
+{"name":"Nepal","flag":"🇳🇵","rating":1055.37,"points":80},
+{"name":"New Zealand","flag":"🇳🇿","rating":1053.95,"points":299},
+{"name":"UAE","flag":"🇦🇪","rating":1036.45,"points":60},
+{"name":"Oman","flag":"🇴🇲","rating":1035.32,"points":20},
+{"name":"Netherlands","flag":"🇳🇱","rating":1003.77,"points":319},
+{"name":"Zimbabwe","flag":"🇿🇼","rating":991.73,"points":333},
+{"name":"Namibia","flag":"🇳🇦","rating":990.93,"points":20},
+{"name":"Scotland","flag":"🏴","rating":980.15,"points":40},
+{"name":"England","flag":"🏴","rating":979.49,"points":202},
+{"name":"Bangladesh","flag":"🇧🇩","rating":975.53,"points":120},
+{"name":"Pakistan","flag":"🇵🇰","rating":972.08,"points":272},
+{"name":"Ireland","flag":"🇮🇪","rating":959.94,"points":40},
+{"name":"Canada","flag":"🇨🇦","rating":953.08,"points":20},
+{"name":"Afghanistan","flag":"🇦🇫","rating":951.27,"points":293},
+{"name":"Sri Lanka","flag":"🇱🇰","rating":950.79,"points":80},
+{"name":"South Africa","flag":"🇿🇦","rating":950.74,"points":226},
+{"name":"USA","flag":"🇺🇸","rating":933.64,"points":40},
+{"name":"West Indies","flag":"🌴","rating":921.52,"points":186}
 ];
 
-
-/* =========================================================
-   MEMBERS
-========================================================= */
-
-const fullMembers=[
-"Pugazhenthi",
-"Madesh",
-"Hakesh",
-"Janardhanan",
-"Dhyan Raj",
-"Lokesh",
-"Gavin Richard",
-"Yogesh"
+const fullMemberNames=[
+"Pugazhenthi","Madesh","Hakesh","Janardhanan",
+"Dhyan Raj","Lokesh","Gavin Richard","Yogesh"
 ];
 
-const associateMembers=[
-"Karthik Deva",
-"Tejesh",
-"Sharath",
-"Sanjai",
-"Darshan",
-"Sulaiman",
-"Vinith",
-"Dharshan Raj",
-"Dharanidharan",
-"Hari Hara Sudhan"
+const associateMemberNames=[
+"Karthik Deva","Tejesh","Sharath","Sanjai","Darshan",
+"Sulaiman","Vinith","Dharshan Raj","Dharanidharan","Hari Hara Sudhan"
 ];
 
+const ADMIN_PIN="IHCC2026";
 
-/* =========================================================
-   TOURNAMENT DATABASE
-   EXACT HISTORICAL DATA FROM THE UPLOADED FILE
-========================================================= */
+/* Historical tournament data from the original IHCC website.
+   This array contains the six tournaments, recorded matches,
+   points tables and knockout results. */
 
-const tournaments=[
-
-/* ================= MINI WORLD CUP 1 ================= */
-
+const tournaments = [
 {
-name:"Mini World Cup 1",
-type:"8-Team World Cup",
-champion:"India",
-runnerUp:"Afghanistan",
-
-matches:[
-
+"name":"Mini World Cup 1",
+"type":"8-Team World Cup",
+"champion":"India",
+"runnerUp":"Afghanistan",
+"matches":[
 ["India","Pakistan","India"],
 ["Australia","Sri Lanka","Sri Lanka"],
 ["Afghanistan","England","Afghanistan"],
@@ -441,14 +286,8 @@ matches:[
 ["England","Pakistan","England"],
 ["South Africa","Sri Lanka","South Africa"],
 ["Afghanistan","New Zealand","Afghanistan"]
-
 ],
-
-tables:[
-
-{
-title:"Points Table",
-rows:[
+"tables":[{"title":"Points Table","rows":[
 ["India",7,7,0,0,14,"NRR not calculated"],
 ["Pakistan",7,5,2,0,10,"NRR not calculated"],
 ["Afghanistan",7,5,2,0,10,"NRR not calculated"],
@@ -457,30 +296,19 @@ rows:[
 ["New Zealand",7,2,5,0,4,"NRR not calculated"],
 ["Sri Lanka",7,2,5,0,4,"NRR not calculated"],
 ["England",7,1,6,0,2,"NRR not calculated"]
-]
-}
-
-],
-
-knockouts:[
+]}],
+"knockouts":[
 "Semifinal 1: India vs Australia — India won",
 "Semifinal 2: Pakistan vs Afghanistan — Pakistan won",
 "Final: India vs Afghanistan — India won"
 ]
-
 },
-
-
-/* ================= MINI WORLD CUP 2 ================= */
-
 {
-name:"Mini World Cup 2",
-type:"8-Team World Cup",
-champion:"India",
-runnerUp:"New Zealand",
-
-matches:[
-
+"name":"Mini World Cup 2",
+"type":"8-Team World Cup",
+"champion":"India",
+"runnerUp":"New Zealand",
+"matches":[
 ["India","South Africa","India"],
 ["Pakistan","New Zealand","Pakistan"],
 ["Afghanistan","Australia","Afghanistan"],
@@ -509,14 +337,8 @@ matches:[
 ["Pakistan","West Indies","Pakistan"],
 ["New Zealand","West Indies","New Zealand"],
 ["India","West Indies","nr"]
-
 ],
-
-tables:[
-
-{
-title:"Points Table",
-rows:[
+"tables":[{"title":"Points Table","rows":[
 ["Pakistan",7,6,1,0,12,"+66.85"],
 ["South Africa",7,5,2,0,10,"+22.42"],
 ["India",7,5,2,0,10,"+20.28"],
@@ -525,30 +347,19 @@ rows:[
 ["Australia",7,2,5,0,4,"-24.14"],
 ["West Indies",7,1,6,0,2,"+8.12"],
 ["England",7,0,7,0,0,"-15.00"]
-]
-}
-
-],
-
-knockouts:[
+]}],
+"knockouts":[
 "Semifinal 1: Pakistan vs New Zealand — New Zealand won",
 "Semifinal 2: South Africa vs India — India won",
 "Final: New Zealand vs India — India won"
 ]
-
 },
-
-
-/* ================= MINI WORLD CUP 3 ================= */
-
 {
-name:"Mini World Cup 3",
-type:"10-Team World Cup",
-champion:"India",
-runnerUp:"Australia",
-
-matches:[
-
+"name":"Mini World Cup 3",
+"type":"10-Team World Cup",
+"champion":"India",
+"runnerUp":"Australia",
+"matches":[
 ["India","New Zealand","India"],
 ["England","Bangladesh","England"],
 ["India","Afghanistan","India"],
@@ -569,7 +380,6 @@ matches:[
 ["Afghanistan","England","Afghanistan"],
 ["India","Bangladesh","India"],
 ["Afghanistan","New Zealand","Afghanistan"],
-
 ["Pakistan","Australia","Pakistan"],
 ["Sri Lanka","South Africa","Sri Lanka"],
 ["West Indies","Australia","West Indies"],
@@ -590,54 +400,35 @@ matches:[
 ["Sri Lanka","Pakistan","Sri Lanka"],
 ["Australia","Sri Lanka","Australia"],
 ["Pakistan","West Indies","Pakistan"]
-
 ],
-
-tables:[
-
-{
-title:"Group A",
-rows:[
+"tables":[
+{"title":"Group A","rows":[
 ["India",8,7,1,0,14,"+33.00"],
 ["Afghanistan",8,4,4,0,8,"-7.12"],
 ["England",8,3,5,0,6,"+12.12"],
 ["New Zealand",8,3,5,0,6,"-10.81"],
 ["Bangladesh",8,3,5,0,6,"-27.12"]
-]
-},
-
-{
-title:"Group B",
-rows:[
+]},
+{"title":"Group B","rows":[
 ["Australia",8,5,3,0,10,"+8.62"],
 ["Pakistan",8,4,4,0,8,"+19.20"],
 ["South Africa",8,4,4,0,8,"+1.87"],
 ["West Indies",8,4,4,0,8,"-11.37"],
 ["Sri Lanka",8,3,5,0,6,"-18.37"]
-]
-}
-
+]}
 ],
-
-knockouts:[
+"knockouts":[
 "Semifinal 1: India vs Pakistan — India won",
 "Semifinal 2: Australia vs Afghanistan — Australia won",
 "Final: India vs Australia — India won"
 ]
-
 },
-
-
-/* ================= MINI WORLD CUP 4 ================= */
-
 {
-name:"Mini World Cup 4",
-type:"10-Team World Cup",
-champion:"India",
-runnerUp:"New Zealand",
-
-matches:[
-
+"name":"Mini World Cup 4",
+"type":"10-Team World Cup",
+"champion":"India",
+"runnerUp":"New Zealand",
+"matches":[
 ["India","Australia","India"],
 ["New Zealand","England","New Zealand"],
 ["India","Afghanistan","India"],
@@ -648,7 +439,6 @@ matches:[
 ["Afghanistan","England","Afghanistan"],
 ["New Zealand","India","New Zealand"],
 ["Australia","Afghanistan","Australia"],
-
 ["South Africa","Pakistan","South Africa"],
 ["Bangladesh","Sri Lanka","Bangladesh"],
 ["West Indies","South Africa","West Indies"],
@@ -659,54 +449,35 @@ matches:[
 ["West Indies","Bangladesh","West Indies"],
 ["South Africa","Sri Lanka","South Africa"],
 ["Pakistan","West Indies","Pakistan"]
-
 ],
-
-tables:[
-
-{
-title:"Group A",
-rows:[
+"tables":[
+{"title":"Group A","rows":[
 ["India",4,3,1,0,6,"+25.25"],
 ["New Zealand",4,3,1,0,6,"+14.75"],
 ["Afghanistan",4,2,2,0,4,"+12.00"],
 ["Australia",4,2,2,0,4,"-2.00"],
 ["England",4,0,4,0,0,"-50.00"]
-]
-},
-
-{
-title:"Group B",
-rows:[
+]},
+{"title":"Group B","rows":[
 ["Bangladesh",4,3,1,0,6,"+14.00"],
 ["West Indies",4,3,1,0,6,"-42.00"],
 ["Pakistan",4,2,2,0,4,"+72.25"],
 ["South Africa",4,2,2,0,4,"-0.50"],
 ["Sri Lanka",4,0,4,0,0,"-43.75"]
-]
-}
-
+]}
 ],
-
-knockouts:[
+"knockouts":[
 "Semifinal 1: India vs West Indies — India won",
 "Semifinal 2: Bangladesh vs New Zealand — New Zealand won",
 "Final: India vs New Zealand — India won"
 ]
-
 },
-
-
-/* ================= MAJOR WORLD CUP 1 ================= */
-
 {
-name:"Major World Cup 1",
-type:"15-Team World Cup",
-champion:"England",
-runnerUp:"Zimbabwe",
-
-matches:[
-
+"name":"Major World Cup 1",
+"type":"15-Team World Cup",
+"champion":"England",
+"runnerUp":"Zimbabwe",
+"matches":[
 ["India","South Africa","India"],
 ["Pakistan","USA","Pakistan"],
 ["Netherlands","India","Netherlands"],
@@ -717,7 +488,6 @@ matches:[
 ["Netherlands","Pakistan","Netherlands"],
 ["India","USA","India"],
 ["Netherlands","South Africa","Netherlands"],
-
 ["Australia","West Indies","Australia"],
 ["Zimbabwe","Sri Lanka","Zimbabwe"],
 ["Australia","Scotland","Australia"],
@@ -728,7 +498,6 @@ matches:[
 ["Sri Lanka","Scotland","Sri Lanka"],
 ["Zimbabwe","Australia","Zimbabwe"],
 ["Scotland","West Indies","Scotland"],
-
 ["England","New Zealand","England"],
 ["Bangladesh","Afghanistan","Bangladesh"],
 ["England","Ireland","England"],
@@ -739,7 +508,6 @@ matches:[
 ["Afghanistan","Ireland","Afghanistan"],
 ["Bangladesh","England","Bangladesh"],
 ["New Zealand","Ireland","New Zealand"],
-
 ["India","England","India"],
 ["Australia","Netherlands","Australia"],
 ["Zimbabwe","Afghanistan","Zimbabwe"],
@@ -755,118 +523,80 @@ matches:[
 ["Australia","England","Australia"],
 ["Zimbabwe","Netherlands","Zimbabwe"],
 ["England","Afghanistan","nr"]
-
 ],
-
-tables:[
-
-{
-title:"Group A",
-rows:[
+"tables":[
+{"title":"Group A","rows":[
 ["India",4,3,1,0,6,"+28.75"],
 ["Netherlands",4,3,1,0,6,"+14.00"],
 ["South Africa",4,2,2,0,4,"+37.00"],
 ["USA",4,1,3,0,2,"-2.75"],
 ["Pakistan",4,1,3,0,2,"-77.00"]
-]
-},
-
-{
-title:"Group B",
-rows:[
+]},
+{"title":"Group B","rows":[
 ["Australia",4,3,1,0,6,"+6.50"],
 ["Zimbabwe",4,3,1,0,6,"-7.50"],
 ["Scotland",4,2,2,0,4,"+29.00"],
 ["Sri Lanka",4,2,2,0,4,"-26.50"],
 ["West Indies",4,0,4,0,0,"-1.50"]
-]
-},
-
-{
-title:"Group C",
-rows:[
+]},
+{"title":"Group C","rows":[
 ["England",4,3,1,0,6,"-6.50"],
 ["Afghanistan",4,2,2,0,4,"+26.25"],
 ["Bangladesh",4,2,2,0,4,"+6.25"],
 ["New Zealand",4,2,2,0,4,"-24.75"],
 ["Ireland",4,1,3,0,2,"-1.25"]
-]
-},
-
-{
-title:"Super Six",
-rows:[
+]},
+{"title":"Super Six","rows":[
 ["Australia",5,4,1,0,8,"+52.80"],
 ["India",5,4,1,0,8,"+11.80"],
 ["Zimbabwe",5,3,2,0,6,"-2.40"],
 ["England",5,2,2,1,5,"+10.00"],
 ["Netherlands",5,1,4,0,2,"+0.40"],
 ["Afghanistan",5,0,4,1,1,"-72.60"]
-]
-}
-
+]}
 ],
-
-knockouts:[
+"knockouts":[
 "Semifinal 1: Australia vs England — England won",
 "Semifinal 2: India vs Zimbabwe — Zimbabwe won",
 "Final: England vs Zimbabwe — England won"
 ]
-
 },
-
-
-/* ================= MAJOR WORLD CUP 2 ================= */
-
 {
-name:"Major World Cup 2",
-type:"20-Team World Cup",
-champion:"India",
-runnerUp:"Nepal",
-
-matches:[
-
-/* Group A */
+"name":"Major World Cup 2",
+"type":"20-Team World Cup",
+"champion":"India",
+"runnerUp":"Nepal",
+"matches":[
 ["India","Pakistan","India"],
 ["Ireland","Namibia","Ireland"],
 ["India","Ireland","India"],
 ["Pakistan","Namibia","Pakistan"],
 ["Namibia","India","Namibia"],
 ["Pakistan","Ireland","Pakistan"],
-
-/* Group B */
 ["Sri Lanka","England","Sri Lanka"],
 ["Nepal","Zimbabwe","Nepal"],
 ["England","Zimbabwe","England"],
 ["Nepal","Sri Lanka","Nepal"],
 ["England","Nepal","England"],
 ["Sri Lanka","Zimbabwe","Sri Lanka"],
-
-/* Group C */
 ["Australia","West Indies","Australia"],
 ["UAE","USA","UAE"],
 ["Australia","USA","Australia"],
 ["UAE","West Indies","UAE"],
 ["Australia","UAE","Australia"],
 ["West Indies","USA","West Indies"],
-
-/* Group D */
 ["New Zealand","Afghanistan","New Zealand"],
 ["Netherlands","Canada","Netherlands"],
 ["New Zealand","Netherlands","New Zealand"],
 ["Afghanistan","Canada","Afghanistan"],
 ["New Zealand","Canada","New Zealand"],
 ["Netherlands","Afghanistan","Netherlands"],
-
-/* Group E */
 ["Bangladesh","South Africa","Bangladesh"],
 ["Oman","Scotland","Oman"],
 ["Scotland","South Africa","Scotland"],
 ["Oman","Bangladesh","Oman"],
 ["Oman","South Africa","Oman"],
 ["Bangladesh","Scotland","Bangladesh"],
-
-/* Super 10 Group A */
 ["India","England","India"],
 ["Netherlands","Australia","Netherlands"],
 ["India","Oman","India"],
@@ -877,8 +607,6 @@ matches:[
 ["Australia","Oman","Australia"],
 ["India","Netherlands","India"],
 ["England","Oman","nr"],
-
-/* Super 10 Group B */
 ["Nepal","Pakistan","Nepal"],
 ["UAE","New Zealand","UAE"],
 ["Pakistan","Bangladesh","Pakistan"],
@@ -889,1566 +617,364 @@ matches:[
 ["UAE","Bangladesh","nr"],
 ["New Zealand","Pakistan","New Zealand"],
 ["Nepal","Bangladesh","nr"]
-
 ],
-
-tables:[
-
-{
-title:"Group A",
-rows:[
+"tables":[
+{"title":"Group A","rows":[
 ["India",3,2,1,0,4,"+37.66"],
 ["Pakistan",3,2,1,0,4,"-35.66"],
 ["Namibia",3,1,2,0,2,"+0.66"],
 ["Ireland",3,1,2,0,2,"-2.66"]
-]
-},
-
-{
-title:"Group B",
-rows:[
+]},
+{"title":"Group B","rows":[
 ["Nepal",3,2,1,0,4,"+44.00"],
 ["England",3,2,1,0,4,"-1.00"],
 ["Sri Lanka",3,2,1,0,4,"-38.33"],
 ["Zimbabwe",3,0,3,0,0,"-4.66"]
-]
-},
-
-{
-title:"Group C",
-rows:[
+]},
+{"title":"Group C","rows":[
 ["Australia",3,3,0,0,6,"+3.33"],
 ["UAE",3,2,1,0,4,"+53.00"],
 ["West Indies",3,1,2,0,2,"-77.00"],
 ["USA",3,0,3,0,0,"-12.66"]
-]
-},
-
-{
-title:"Group D",
-rows:[
+]},
+{"title":"Group D","rows":[
 ["New Zealand",3,3,0,0,6,"+4.33"],
 ["Netherlands",3,2,1,0,4,"+1.66"],
 ["Afghanistan",3,1,2,0,2,"+1.33"],
 ["Canada",3,0,3,0,0,"-1.33"]
-]
-},
-
-{
-title:"Group E",
-rows:[
+]},
+{"title":"Group E","rows":[
 ["Oman",3,3,0,0,6,"+30.33"],
 ["Bangladesh",3,2,1,0,4,"+50.00"],
 ["Scotland",3,1,2,0,2,"-40.33"],
 ["South Africa",3,0,3,0,0,"-40.00"]
-]
-},
-
-{
-title:"Super 10 Group A",
-rows:[
+]},
+{"title":"Super 10 Group A","rows":[
 ["India",4,4,0,0,8,"+8.75"],
 ["Australia",4,2,2,0,4,"+12.75"],
 ["Netherlands",4,2,2,0,4,"+2.50"],
 ["Oman",4,1,2,1,3,"+3.50"],
 ["England",4,0,3,1,1,"-52.50"]
-]
-},
-
-{
-title:"Super 10 Group B",
-rows:[
+]},
+{"title":"Super 10 Group B","rows":[
 ["New Zealand",4,3,1,0,6,"+45.75"],
 ["UAE",4,2,1,1,5,"+15.75"],
 ["Nepal",4,2,1,1,5,"+10.75"],
 ["Pakistan",4,1,3,0,2,"-51.00"],
 ["Bangladesh",4,0,2,2,2,"-20.25"]
-]
-}
-
+]}
 ],
-
-knockouts:[
+"knockouts":[
 "Eliminator 1: Australia vs Nepal — Nepal won",
 "Eliminator 2: UAE vs Netherlands — UAE won",
 "Semifinal 1: India vs UAE — India won",
 "Semifinal 2: New Zealand vs Nepal — Nepal won",
 "Final: India vs Nepal — India won"
 ]
-
 }
-
 ];
 
-
-/* =========================================================
-   RANKING STORAGE
-========================================================= */
-
 function baseline(){
-
-let x={};
-
-officialTeams.forEach(t=>{
-x[t.name]={
-rating:t.rating,
-points:t.points,
-wins:0,
-losses:0,
-noResults:0
-};
-});
-
-return x;
+const o={};
+officialTeams.forEach(t=>o[t.name]={rating:t.rating,points:t.points,wins:0,losses:0,noResults:0});
+return o;
 }
 
-let rankings;
-
-try{
-rankings=JSON.parse(localStorage.getItem("ihccRankings"));
-}catch(e){
-rankings=null;
-}
-
-if(!rankings ||
-officialTeams.some(t=>!rankings[t.name] ||
-typeof rankings[t.name].rating!=="number")){
-
-rankings=baseline();
-
-localStorage.setItem(
-"ihccRankings",
-JSON.stringify(rankings)
-);
-
-}
-
-let newMatches=[];
-
-try{
-newMatches=
-JSON.parse(
-localStorage.getItem("ihccMatches")||"[]"
-);
-}catch(e){
-newMatches=[];
-}
-
-
-/* =========================================================
-   HELPERS
-========================================================= */
+let rankings=JSON.parse(localStorage.getItem("ihccRankings")||"null")||baseline();
+let matches=JSON.parse(localStorage.getItem("ihccMatches")||"[]");
 
 function save(){
-
-localStorage.setItem(
-"ihccRankings",
-JSON.stringify(rankings)
-);
-
-localStorage.setItem(
-"ihccMatches",
-JSON.stringify(newMatches)
-);
-
+localStorage.setItem("ihccRankings",JSON.stringify(rankings));
+localStorage.setItem("ihccMatches",JSON.stringify(matches));
 }
 
-function round(n){
-
-return Math.round(n*100)/100;
-
+function esc(v){
+return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;");
 }
 
-function expected(a,b){
-
-return 1/
-(
-1+
-Math.pow(10,(b-a)/400)
-);
-
-}
-
-function getFlag(name){
-
-let t=officialTeams.find(
-x=>x.name===name
-);
-
+function flag(n){
+const t=officialTeams.find(x=>x.name===n);
 return t?t.flag:"🏏";
-
 }
 
-function escapeHTML(value){
-
-return String(value)
-.replaceAll("&","&amp;")
-.replaceAll("<","&lt;")
-.replaceAll(">","&gt;")
-.replaceAll('"',"&quot;")
-.replaceAll("'","&#039;");
-
-}
-
-function signed(n){
-
-return n>=0
-? "+"+n.toFixed(2)
-: n.toFixed(2);
-
-}
-
-
-/* =========================================================
-   RANKINGS DISPLAY
-========================================================= */
-
-function renderRankings(){
-
-let list=officialTeams.map(t=>({
-
-name:t.name,
-flag:t.flag,
-rating:rankings[t.name].rating,
-points:rankings[t.name].points
-
-}));
-
-list.sort(
-(a,b)=>b.rating-a.rating
-);
-
-let html="";
-
-list.forEach((t,i)=>{
-
-let rank=i+1;
-
-let cls=
-rank===1?"rank1":
-rank===2?"rank2":
-rank===3?"rank3":"";
-
-let medal=
-rank===1?"🥇":
-rank===2?"🥈":
-rank===3?"🥉":
-rank;
-
-html+=`
-
-<tr class="${cls}">
-
-<td><b>${medal}</b></td>
-
-<td>${t.flag} ${escapeHTML(t.name)}</td>
-
-<td class="rating">
-${t.rating.toFixed(2)}
-</td>
-
-<td class="points">
-${t.points}
-</td>
-
-</tr>
-
-`;
-
-});
-
-document.getElementById(
-"rankingTable"
-).innerHTML=html;
-
-document.getElementById(
-"highestElo"
-).textContent=
-list[0].rating.toFixed(2);
-
-document.getElementById(
-"worldNo1"
-).textContent=
-list[0].flag+" "+list[0].name;
-
-document.getElementById(
-"matchCount"
-).textContent=
-newMatches.length;
-
-}
-
-
-/* =========================================================
-   TEAMS DISPLAY
-========================================================= */
-
-function renderTeams(){
-
-document.getElementById(
-"fullMembers"
-).innerHTML=
-
-fullMembers.map(
-(name,i)=>`
-
-<div class="memberBox">
-
-<div class="memberNumber">
-Full Member ${i+1}
-</div>
-
-<b>🏛️ ${escapeHTML(name)}</b>
-
-<br><br>
-
-<span class="small">
-IHCC Full Member
-</span>
-
-</div>
-
-`
-).join("");
-
-
-document.getElementById(
-"associateMembers"
-).innerHTML=
-
-associateMembers.map(
-(name,i)=>`
-
-<div class="memberBox">
-
-<div class="memberNumber">
-Associate Member ${i+1}
-</div>
-
-<b>🌐 ${escapeHTML(name)}</b>
-
-<br><br>
-
-<span class="small">
-IHCC Associate Member
-</span>
-
-</div>
-
-`
-).join("");
-
-
-document.getElementById(
-"worldTeams"
-).innerHTML=
-
-officialTeams.map(t=>{
-
-let r=rankings[t.name];
-
-return`
-
-<div class="teamBox">
-
-<b>
-${t.flag} ${escapeHTML(t.name)}
-</b>
-
-<br><br>
-
-<span class="small">
-Elo Rating
-</span>
-
-<br>
-
-<strong>
-${r.rating.toFixed(2)}
-</strong>
-
-<br><br>
-
-<span class="small">
-Ranking Points
-</span>
-
-<br>
-
-<strong>
-${r.points}
-</strong>
-
-</div>
-
-`;
-
-}).join("");
-
-}
-
-
-/* =========================================================
-   TOURNAMENT LIST
-========================================================= */
-
-function renderTournamentList(){
-
-document.getElementById(
-"tournamentGrid"
-).innerHTML=
-
-tournaments.map(
-(t,i)=>`
-
-<div
-class="tournamentCard"
-onclick="showTournament(${i})">
-
-<h3>
-🏆 ${escapeHTML(t.name)}
-</h3>
-
-<p>
-${escapeHTML(t.type)}
-</p>
-
-<br>
-
-<p>
-<b>Champion:</b><br>
-${getFlag(t.champion)}
-${escapeHTML(t.champion)}
-</p>
-
-<p>
-<b>Runner-up:</b><br>
-${getFlag(t.runnerUp)}
-${escapeHTML(t.runnerUp)}
-</p>
-
-<br>
-
-<p>
-<b>${t.matches.length}</b>
-historical matches recorded
-</p>
-
-</div>
-
-`
-).join("");
-
-}
-
-
-/* =========================================================
-   TOURNAMENT DETAILS
-========================================================= */
-
-function showTournament(index){
-
-let t=tournaments[index];
-
-document.getElementById(
-"tournamentList"
-).style.display="none";
-
-document.getElementById(
-"tournamentDetails"
-).style.display="block";
-
-let html=`
-
-<h2>
-🏆 ${escapeHTML(t.name)}
-</h2>
-
-<div class="championBox">
-
-<div>🏆 CHAMPION</div>
-
-<div class="big">
-${getFlag(t.champion)}
-${escapeHTML(t.champion)}
-</div>
-
-<div>
-Runner-up:
-<b>
-${getFlag(t.runnerUp)}
-${escapeHTML(t.runnerUp)}
-</b>
-</div>
-
-</div>
-
-`;
-
-
-/* TABLES */
-
-t.tables.forEach(table=>{
-
-html+=`
-
-<h3>
-📊 ${escapeHTML(table.title)}
-</h3>
-
-<div class="tableWrap">
-
-<table>
-
-<thead>
-
-<tr>
-<th>Pos</th>
-<th>Team</th>
-<th>P</th>
-<th>W</th>
-<th>L</th>
-<th>NR</th>
-<th>Pts</th>
-<th>NRR</th>
-</tr>
-
-</thead>
-
-<tbody>
-
-`;
-
-table.rows.forEach((r,i)=>{
-
-html+=`
-
-<tr>
-
-<td>${i+1}</td>
-
-<td>
-${getFlag(r[0])}
-${escapeHTML(r[0])}
-</td>
-
-<td>${r[1]}</td>
-<td>${r[2]}</td>
-<td>${r[3]}</td>
-<td>${r[4]}</td>
-<td>${r[5]}</td>
-<td>${r[6]}</td>
-
-</tr>
-
-`;
-
-});
-
-html+=`
-
-</tbody>
-
-</table>
-
-</div>
-
-<br>
-
-`;
-
-});
-
-
-/* MATCH RESULTS */
-
-html+=`
-
-<h3>
-🏏 Match Results
-</h3>
-
-`;
-
-t.matches.forEach((m,i)=>{
-
-let result;
-
-if(m[2]==="nr"){
-
-result=`
-
-<span class="nr">
-⚪ No Result
-</span>
-
-`;
-
-}else{
-
-result=`
-
-<span class="win">
-🏆 ${getFlag(m[2])}
-${escapeHTML(m[2])} won
-</span>
-
-`;
-
-}
-
-html+=`
-
-<div class="match">
-
-<strong>
-Match ${i+1}
-</strong>
-
-<br><br>
-
-${getFlag(m[0])}
-${escapeHTML(m[0])}
-
-&nbsp;
-<b>vs</b>
-&nbsp;
-
-${getFlag(m[1])}
-${escapeHTML(m[1])}
-
-<br><br>
-
-${result}
-
-</div>
-
-`;
-
-});
-
-
-/* KNOCKOUTS */
-
-html+=`
-
-<h3>
-🏆 Knockouts
-</h3>
-
-`;
-
-t.knockouts.forEach(k=>{
-
-html+=`
-
-<div class="match">
-🏆 ${escapeHTML(k)}
-</div>
-
-`;
-
-});
-
-
-document.getElementById(
-"tournamentOutput"
-).innerHTML=html;
-
-}
-
-
-function showTournamentList(){
-
-document.getElementById(
-"tournamentDetails"
-).style.display="none";
-
-document.getElementById(
-"tournamentList"
-).style.display="block";
-
-document.getElementById(
-"tournamentOutput"
-).innerHTML="";
-
-}
-
-
-/* =========================================================
-   ADMIN MATCH SELECTS
-========================================================= */
-
-function loadSelects(){
-
-let a=document.getElementById("team1");
-let b=document.getElementById("team2");
-
-a.innerHTML="";
-b.innerHTML="";
-
-officialTeams.forEach(t=>{
-
-a.innerHTML+=`
-
-<option value="${t.name}">
-${t.flag} ${t.name}
-</option>
-
-`;
-
-b.innerHTML+=`
-
-<option value="${t.name}">
-${t.flag} ${t.name}
-</option>
-
-`;
-
-});
-
-b.selectedIndex=1;
-
-}
-
-
-/* =========================================================
-   ELO CALCULATION
-========================================================= */
-
-function calculateMatch(teamA,teamB,result){
-
-let A=rankings[teamA];
-let B=rankings[teamB];
-
-let oldA=A.rating;
-let oldB=B.rating;
-
-if(result==="nr"){
-
+function rnd(n){return Math.round(n*100)/100}
+function signed(n){return (n>=0?"+":"")+n.toFixed(2)}
+function expected(a,b){return 1/(1+Math.pow(10,(b-a)/400))}
+
+function calculate(a,b,res){
+const A=rankings[a],B=rankings[b];
+const oldA=A.rating,oldB=B.rating;
+
+if(res==="nr"){
 A.noResults++;
 B.noResults++;
-
-return{
-
-oldA,
-oldB,
-newA:oldA,
-newB:oldB,
-changeA:0,
-changeB:0
-
-};
-
+return {oldA,oldB,newA:oldA,newB:oldB,changeA:0,changeB:0};
 }
 
-let expA=expected(oldA,oldB);
-let expB=expected(oldB,oldA);
+const sA=res==="team1"?1:0;
+const sB=res==="team2"?1:0;
+const changeA=K*(sA-expected(oldA,oldB));
+const changeB=K*(sB-expected(oldB,oldA));
 
-let actualA=
-result==="team1"?1:0;
+A.rating=rnd(oldA+changeA);
+B.rating=rnd(oldB+changeB);
 
-let actualB=
-result==="team2"?1:0;
+if(res==="team1"){A.wins++;B.losses++}
+else{B.wins++;A.losses++}
 
-let changeA=
-K*(actualA-expA);
-
-let changeB=
-K*(actualB-expB);
-
-A.rating=
-round(oldA+changeA);
-
-B.rating=
-round(oldB+changeB);
-
-if(result==="team1"){
-
-A.wins++;
-B.losses++;
-
-}else{
-
-B.wins++;
-A.losses++;
-
+return {oldA,oldB,newA:A.rating,newB:B.rating,changeA:rnd(changeA),changeB:rnd(changeB)};
 }
-
-return{
-
-oldA,
-oldB,
-
-newA:A.rating,
-newB:B.rating,
-
-changeA:round(changeA),
-changeB:round(changeB)
-
-};
-
-}
-
-
-/* =========================================================
-   MATCH SUBMISSION
-========================================================= */
 
 function submitMatch(){
+if(!window.ihccAdmin){alert("Unlock Admin first.");return}
 
-if(!window.__IHCC_ADMIN){
+const tournament=document.getElementById("tournament").value.trim();
+const team1=document.getElementById("team1").value;
+const team2=document.getElementById("team2").value;
+const result=document.getElementById("matchResult").value;
+const p1=Number(document.getElementById("points1").value)||0;
+const p2=Number(document.getElementById("points2").value)||0;
 
-openAdminModal();
+if(!tournament){alert("Enter the tournament or series name.");return}
+if(team1===team2){alert("Select two different teams.");return}
+if(p1<0||p2<0){alert("Ranking points cannot be negative.");return}
 
-return;
+const r=calculate(team1,team2,result);
+rankings[team1].points+=p1;
+rankings[team2].points+=p2;
 
-}
+const winner=result==="team1"?team1:result==="team2"?team2:"No Result";
 
-let tournament=
-document.getElementById(
-"tournamentName"
-).value.trim();
-
-let team1=
-document.getElementById(
-"team1"
-).value;
-
-let team2=
-document.getElementById(
-"team2"
-).value;
-
-let result=
-document.getElementById(
-"matchResult"
-).value;
-
-let points1=
-Number(
-document.getElementById(
-"points1"
-).value
-)||0;
-
-let points2=
-Number(
-document.getElementById(
-"points2"
-).value
-)||0;
-
-
-if(!tournament){
-
-alert("Enter the tournament name.");
-return;
-
-}
-
-if(team1===team2){
-
-alert("Choose two different teams.");
-return;
-
-}
-
-
-let data=
-calculateMatch(
-team1,
-team2,
-result
-);
-
-
-rankings[team1].points+=points1;
-rankings[team2].points+=points2;
-
-
-let winner=
-result==="team1"
-?team1
-:
-result==="team2"
-?team2
-:"No Result";
-
-
-newMatches.push({
-
-tournament,
-team1,
-team2,
-result,
-winner,
-
-points1,
-points2,
-
-oldA:data.oldA,
-oldB:data.oldB,
-
-newA:data.newA,
-newB:data.newB,
-
-changeA:data.changeA,
-changeB:data.changeB,
-
+matches.push({
+tournament,team1,team2,result,winner,
+points1:p1,points2:p2,
+oldA:r.oldA,oldB:r.oldB,newA:r.newA,newB:r.newB,
+changeA:r.changeA,changeB:r.changeB,
 date:new Date().toLocaleString()
-
 });
-
 
 save();
 
+document.getElementById("calculation").innerHTML=`
+<div class="notice">
+<b>${esc(winner)}</b><br>
+${esc(team1)}: ${r.oldA.toFixed(2)} → ${r.newA.toFixed(2)} (${signed(r.changeA)})<br>
+${esc(team2)}: ${r.oldB.toFixed(2)} → ${r.newB.toFixed(2)} (${signed(r.changeB)})<br>
+Points added: ${p1} / ${p2}
+</div>`;
 
-document.getElementById(
-"calculation"
-).innerHTML=`
-
-<div class="result">
-
-<b>
-${result==="nr"
-?"⚪ No Result"
-:"⚡ Elo Updated"}
-</b>
-
-<br><br>
-
-${getFlag(team1)}
-${team1}:
-${data.oldA.toFixed(2)}
-→
-<b>${data.newA.toFixed(2)}</b>
-
-<span class="${
-data.changeA>=0
-?"changeUp"
-:"changeDown"
-}">
-(${signed(data.changeA)})
-</span>
-
-<br>
-
-${getFlag(team2)}
-${team2}:
-${data.oldB.toFixed(2)}
-→
-<b>${data.newB.toFixed(2)}</b>
-
-<span class="${
-data.changeB>=0
-?"changeUp"
-:"changeDown"
-}">
-(${signed(data.changeB)})
-</span>
-
-<br><br>
-
-🏆
-${winner==="No Result"
-?"No Result"
-:getFlag(winner)+" "+winner+" won"}
-
-</div>
-
-`;
-
-
-document.getElementById(
-"tournamentName"
-).value="";
-
-document.getElementById(
-"points1"
-).value=0;
-
-document.getElementById(
-"points2"
-).value=0;
-
+document.getElementById("tournament").value="";
+document.getElementById("points1").value=0;
+document.getElementById("points2").value=0;
 renderAll();
-
 }
 
+function renderRankings(){
+const list=officialTeams.map(t=>({...t,...rankings[t.name]})).sort((a,b)=>b.rating-a.rating);
 
-/* =========================================================
-   NEW MATCH HISTORY
-========================================================= */
+document.getElementById("rankingTable").innerHTML=list.map((t,i)=>`
+<tr class="${i===0?"rank1":i===1?"rank2":i===2?"rank3":""}">
+<td>${i<3?["🥇","🥈","🥉"][i]:i+1}</td>
+<td>${t.flag} ${esc(t.name)}</td>
+<td class="rating">${t.rating.toFixed(2)}</td>
+<td class="points">${t.points}</td>
+</tr>`).join("");
+
+document.getElementById("teamCount").textContent=list.length;
+document.getElementById("matchCount").textContent=matches.length;
+document.getElementById("highestElo").textContent=list[0].rating.toFixed(2);
+document.getElementById("champion").textContent=list[0].name;
+}
+
+function memberCards(id,names,label){
+document.getElementById(id).innerHTML=names.map((n,i)=>`
+<div class="member"><small>${label} ${i+1}</small><b>${esc(n)}</b></div>
+`).join("");
+}
+
+function renderTeams(){
+memberCards("fullMembers",fullMemberNames,"Full Member");
+memberCards("associateMembers",associateMemberNames,"Associate Member");
+
+document.getElementById("worldTeams").innerHTML=officialTeams.map(t=>{
+const r=rankings[t.name];
+return `<div class="team"><b>${t.flag} ${esc(t.name)}</b><br><br>
+<span class="small">Elo Rating</span><br><b>${r.rating.toFixed(2)}</b><br><br>
+<span class="small">Ranking Points</span><br><b>${r.points}</b></div>`;
+}).join("");
+}
+
+function loadSelects(){
+const a=document.getElementById("team1");
+const b=document.getElementById("team2");
+a.innerHTML=officialTeams.map(t=>`<option value="${esc(t.name)}">${t.flag} ${esc(t.name)}</option>`).join("");
+b.innerHTML=a.innerHTML;
+b.selectedIndex=1;
+}
 
 function renderHistory(){
+const box=document.getElementById("history");
 
-let box=
-document.getElementById("history");
-
-if(!newMatches.length){
-
-box.innerHTML=`
-
-<p class="small">
-No new matches have been entered yet.
-</p>
-
-`;
-
+if(!matches.length){
+box.innerHTML='<p class="small">No new matches have been entered.</p>';
 return;
-
 }
 
-box.innerHTML=
-newMatches
-.slice()
-.reverse()
-.map(m=>`
-
+box.innerHTML=[...matches].reverse().map(m=>`
 <div class="match">
-
-<strong>
-🏆 ${escapeHTML(m.tournament)}
-</strong>
-
-<br><br>
-
-${getFlag(m.team1)}
-${escapeHTML(m.team1)}
-
-<b>vs</b>
-
-${getFlag(m.team2)}
-${escapeHTML(m.team2)}
-
-<br><br>
-
-${
-m.result==="nr"
-?"⚪ No Result"
-:
-`🏆 ${getFlag(m.winner)}
-${escapeHTML(m.winner)} won`
+<b>🏆 ${esc(m.tournament)}</b><br><br>
+${flag(m.team1)} ${esc(m.team1)} vs ${flag(m.team2)} ${esc(m.team2)}<br>
+Result: <b>${esc(m.winner)}</b><br>
+Elo: ${m.oldA.toFixed(2)} → ${m.newA.toFixed(2)} / ${m.oldB.toFixed(2)} → ${m.newB.toFixed(2)}<br>
+Points added: ${m.points1} / ${m.points2}<br>
+<span class="small">${esc(m.date)}</span>
+</div>`).join("");
 }
 
-<br><br>
-
-<b>Elo:</b>
-
-<br>
-
-${escapeHTML(m.team1)}
-${m.oldA.toFixed(2)}
-→
-${m.newA.toFixed(2)}
-
-<br>
-
-${escapeHTML(m.team2)}
-${m.oldB.toFixed(2)}
-→
-${m.newB.toFixed(2)}
-
-<br><br>
-
-<b>Ranking Points:</b>
-
-<br>
-
-${escapeHTML(m.team1)} +${m.points1}
-
-<br>
-
-${escapeHTML(m.team2)} +${m.points2}
-
-<br><br>
-
-<span class="small">
-${escapeHTML(m.date)}
-</span>
-
-</div>
-
-`).join("");
-
+function renderTournamentList(){
+document.getElementById("tournamentGrid").innerHTML=tournaments.map((t,i)=>`
+<div class="tcard" role="button" tabindex="0" onclick="showTournament(${i})"
+onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showTournament(${i})}">
+<h3>🏆 ${esc(t.name)}</h3>
+<p>${esc(t.type||"IHCC Tournament")}</p>
+<p><b>Champion:</b> ${flag(t.champion)} ${esc(t.champion)}</p>
+<p><b>Runner-up:</b> ${flag(t.runnerUp)} ${esc(t.runnerUp)}</p>
+<p class="small">${(t.matches||[]).length} recorded match results</p>
+</div>`).join("");
 }
 
+function showTournament(i){
+const t=tournaments[i];
+if(!t)return;
 
-/* =========================================================
-   NAVIGATION
-========================================================= */
+document.getElementById("tournamentList").style.display="none";
+document.getElementById("tournamentDetails").style.display="block";
+
+let h=`<h2 style="margin:16px 0">🏆 ${esc(t.name)}</h2>
+<div class="champ">🏆 TOURNAMENT CHAMPION
+<strong>${flag(t.champion)} ${esc(t.champion)}</strong>
+Runner-up: ${flag(t.runnerUp)} ${esc(t.runnerUp)}</div>`;
+
+(t.tables||[]).forEach(tb=>{
+h+=`<h3>📊 ${esc(tb.title||"Points Table")}</h3>
+<div class="tablewrap"><table><thead><tr>
+<th>Pos</th><th>Team</th><th>P</th><th>W</th><th>L</th><th>NR</th><th>Pts</th><th>NRR</th>
+</tr></thead><tbody>`;
+
+(tb.rows||[]).forEach((r,j)=>{
+h+=`<tr><td>${j+1}</td><td>${flag(r[0])} ${esc(r[0])}</td>${r.slice(1).map(x=>`<td>${esc(x)}</td>`).join("")}</tr>`;
+});
+
+h+="</tbody></table></div>";
+});
+
+h+="<h3>🏏 Match Results</h3>";
+
+(t.matches||[]).forEach((m,j)=>{
+const nr=m[2]==="nr"||m[2]==="No Result";
+h+=`<div class="match"><b>Match ${j+1}</b><br><br>
+${flag(m[0])} ${esc(m[0])} vs ${flag(m[1])} ${esc(m[1])}<br>
+${nr?'<span class="nr">⚪ No Result</span>':`<span class="win">🏆 ${flag(m[2])} ${esc(m[2])} won</span>`}
+</div>`;
+});
+
+h+="<h3>🥇 Knockout Results</h3>";
+(t.knockouts||[]).forEach(k=>h+=`<div class="match">🏆 ${esc(k)}</div>`);
+
+document.getElementById("tournamentOutput").innerHTML=h;
+window.scrollTo(0,0);
+}
+
+function showTournamentList(){
+document.getElementById("tournamentDetails").style.display="none";
+document.getElementById("tournamentList").style.display="block";
+document.getElementById("tournamentOutput").innerHTML="";
+}
 
 function openPage(id,button){
-
-if(
-id==="match" &&
-!window.__IHCC_ADMIN
-){
-
-openAdminModal();
-
-return;
-
-}
-
-document
-.querySelectorAll(".page")
-.forEach(
-p=>p.classList.remove("active")
-);
-
-document
-.querySelectorAll("nav .tab")
-.forEach(
-b=>b.classList.remove("active")
-);
-
-document
-.getElementById(id)
-.classList.add("active");
-
-if(button)
+if(id==="match"&&!window.ihccAdmin){alert("Unlock Admin to access match entry.");return}
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.querySelectorAll("nav .tab").forEach(b=>b.classList.remove("active"));
+document.getElementById(id).classList.add("active");
 button.classList.add("active");
-
+window.scrollTo(0,0);
 }
-
-
-/* =========================================================
-   RESET
-========================================================= */
 
 function resetData(){
-
-if(!window.__IHCC_ADMIN){
-
-openAdminModal();
-
-return;
-
-}
-
-if(!confirm(
-"Reset all new matches and restore the official baseline?"
-))return;
-
-localStorage.removeItem(
-"ihccRankings"
-);
-
-localStorage.removeItem(
-"ihccMatches"
-);
-
+if(!window.ihccAdmin){alert("Unlock Admin first.");return}
+if(!confirm("Reset new match data and restore the official baseline?"))return;
+localStorage.removeItem("ihccRankings");
+localStorage.removeItem("ihccMatches");
 location.reload();
-
 }
-
-
-/* =========================================================
-   RENDER ALL
-========================================================= */
 
 function renderAll(){
-
 renderRankings();
 renderTeams();
-renderTournamentList();
 renderHistory();
-
 }
 
+const adminButton=document.getElementById("adminButton");
+const modal=document.getElementById("modal");
+const pin=document.getElementById("pin");
+const error=document.getElementById("error");
+const unlock=document.getElementById("unlock");
+const lock=document.getElementById("lock");
+window.ihccAdmin=false;
 
-/* =========================================================
-   INITIALIZE
-========================================================= */
+function setAdmin(on){
+window.ihccAdmin=on;
+document.body.classList.toggle("admin",on);
+document.getElementById("matchTab").style.display=on?"block":"none";
+unlock.style.display=on?"none":"block";
+lock.style.display=on?"block":"none";
+adminButton.textContent=on?"🔓 Admin ON":"🔐 Admin";
+}
+
+adminButton.onclick=()=>{
+if(window.ihccAdmin){
+setAdmin(false);
+document.getElementById("match").classList.remove("active");
+document.getElementById("rankings").classList.add("active");
+document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+document.querySelector("nav .tab").classList.add("active");
+return;
+}
+modal.style.display="flex";
+pin.value="";
+error.textContent="";
+pin.focus();
+};
+
+unlock.onclick=()=>{
+if(pin.value.trim()!==ADMIN_PIN){
+error.textContent="Incorrect Admin PIN.";
+pin.select();
+return;
+}
+
+setAdmin(true);
+modal.style.display="none";
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+document.getElementById("match").classList.add("active");
+document.getElementById("matchTab").classList.add("active");
+};
+
+lock.onclick=()=>adminButton.onclick();
+
+pin.addEventListener("keydown",e=>{
+if(e.key==="Enter")unlock.click();
+if(e.key==="Escape")modal.style.display="none";
+});
+
+modal.addEventListener("click",e=>{
+if(e.target===modal)modal.style.display="none";
+});
 
 loadSelects();
 renderAll();
-
+renderTournamentList();
 </script>
-
-
-<!-- ADMIN BUTTON -->
-
-<button
-id="adminAccessButton"
-type="button">
-🔐 Admin
-</button>
-
-
-<!-- ADMIN MODAL -->
-
-<div
-id="adminModal"
-role="dialog"
-aria-modal="true">
-
-<div class="admin-box">
-
-<h2>🔐 Admin Access</h2>
-
-<p>
-Only the administrator can add matches or reset ranking data.
-</p>
-
-<input
-id="adminPinInput"
-type="password"
-inputmode="text"
-autocomplete="off"
-placeholder="Enter Admin PIN">
-
-<button
-id="adminUnlock"
-class="adminBtn"
-type="button">
-Unlock
-</button>
-
-<button
-id="adminLock"
-class="adminBtn"
-type="button"
-style="display:none">
-Lock Admin
-</button>
-
-<div id="adminError"></div>
-
-</div>
-
-</div>
-
-
-<script>
-
-/* =========================================================
-   WORKING ADMIN SYSTEM
-========================================================= */
-
-(function(){
-
-"use strict";
-
-const ADMIN_PIN="IHCC2026";
-
-let admin=false;
-
-const modal=
-document.getElementById("adminModal");
-
-const input=
-document.getElementById("adminPinInput");
-
-const error=
-document.getElementById("adminError");
-
-const access=
-document.getElementById("adminAccessButton");
-
-const unlock=
-document.getElementById("adminUnlock");
-
-const lock=
-document.getElementById("adminLock");
-
-
-function updateAdmin(){
-
-window.__IHCC_ADMIN=admin;
-
-document
-.querySelectorAll(".admin-only-tab")
-.forEach(el=>{
-
-el.style.setProperty(
-"display",
-admin?"block":"none",
-"important"
-);
-
-});
-
-document
-.querySelectorAll(".admin-only-page")
-.forEach(el=>{
-
-el.style.setProperty(
-"display",
-admin?"none":"none",
-"important"
-);
-
-});
-
-/*
-The Admin page is controlled through .active,
-so after unlocking we explicitly allow it.
-*/
-
-if(admin){
-
-document
-.querySelectorAll(".admin-only-tab")
-.forEach(el=>{
-
-el.style.setProperty(
-"display",
-"block",
-"important"
-);
-
-});
-
-access.textContent="🔓 Admin ON";
-
-unlock.style.display="none";
-lock.style.display="block";
-
-}else{
-
-access.textContent="🔐 Admin";
-
-unlock.style.display="block";
-lock.style.display="none";
-
-}
-
-}
-
-
-/* OPEN ADMIN */
-
-access.onclick=function(){
-
-if(admin){
-
-lockAdmin();
-
-return;
-
-}
-
-modal.style.display="flex";
-
-input.value="";
-error.textContent="";
-
-setTimeout(
-()=>input.focus(),
-50
-);
-
-};
-
-
-/* UNLOCK */
-
-unlock.onclick=function(){
-
-if(input.value.trim()===ADMIN_PIN){
-
-admin=true;
-
-window.__IHCC_ADMIN=true;
-
-modal.style.display="none";
-
-error.textContent="";
-
-input.value="";
-
-updateAdmin();
-
-/*
-Open Enter Match immediately.
-*/
-
-document
-.querySelectorAll(".page")
-.forEach(
-p=>p.classList.remove("active")
-);
-
-document
-.querySelectorAll("nav .tab")
-.forEach(
-b=>b.classList.remove("active")
-);
-
-document
-.getElementById("match")
-.classList.add("active");
-
-document
-.getElementById("matchTab")
-.classList.add("active");
-
-/*
-Important:
-The page itself remains visible because
-admin-only-page is overridden here.
-*/
-
-document
-.getElementById("match")
-.style.display="block";
-
-}else{
-
-error.textContent=
-"❌ Incorrect Admin PIN.";
-
-input.select();
-
-}
-
-};
-
-
-/* LOCK */
-
-function lockAdmin(){
-
-admin=false;
-
-window.__IHCC_ADMIN=false;
-
-updateAdmin();
-
-document
-.querySelectorAll(".page")
-.forEach(
-p=>p.classList.remove("active")
-);
-
-document
-.getElementById("rankings")
-.classList.add("active");
-
-document
-.querySelectorAll("nav .tab")
-.forEach(
-b=>b.classList.remove("active")
-);
-
-document
-.querySelector(
-'nav .tab[onclick*="rankings"]'
-)
-.classList.add("active");
-
-}
-
-
-/* LOCK BUTTON */
-
-lock.onclick=function(){
-
-lockAdmin();
-
-};
-
-
-/* ENTER KEY */
-
-input.addEventListener(
-"keydown",
-function(e){
-
-if(e.key==="Enter"){
-
-e.preventDefault();
-
-unlock.click();
-
-}
-
-if(e.key==="Escape"){
-
-modal.style.display="none";
-
-}
-
-}
-);
-
-
-/* CLICK OUTSIDE */
-
-modal.addEventListener(
-"click",
-function(e){
-
-if(e.target===modal){
-
-modal.style.display="none";
-
-}
-
-}
-);
-
-
-/*
-FINAL FIX:
-Override the protected page's CSS only while
-admin is unlocked.
-*/
-
-const style=document.createElement("style");
-
-style.id="admin-final-override";
-
-style.textContent=`
-
-body.admin-unlocked
-.admin-only-page{
-display:block !important;
-}
-
-body.admin-unlocked
-.admin-only-tab{
-display:block !important;
-}
-
-`;
-
-document.head.appendChild(style);
-
-
-const oldUpdate=updateAdmin;
-
-updateAdmin=function(){
-
-oldUpdate();
-
-if(admin){
-
-document.body.classList.add(
-"admin-unlocked"
-);
-
-}else{
-
-document.body.classList.remove(
-"admin-unlocked"
-);
-
-}
-
-};
-
-
-/* INITIAL STATE */
-
-updateAdmin();
-
-})();
-
-</script>
-
 </body>
 </html>
