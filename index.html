@@ -1610,7 +1610,14 @@ function renderHistory() {
                     </button>
                 </div>
             `;
-        }).join("");
+                }).join("");
+
+    // Show Delete buttons after match history is refreshed.
+    if (window.__ihccAdmin) {
+        box.querySelectorAll(".admin-only-control").forEach(function(button) {
+            button.style.setProperty("display", "block", "important");
+        });
+    }
 }
 
 // ================= DELETE ONE MATCH =================
