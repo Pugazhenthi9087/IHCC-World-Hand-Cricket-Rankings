@@ -1734,14 +1734,16 @@ renderAll();
 
     function updateAdminState() {
         document.querySelectorAll(
-            ".admin-only-tab, .admin-only-page, .admin-only-control"
-        ).forEach(function (el) {
-            el.style.setProperty(
-                "display",
-                admin ? "" : "none",
-                "important"
-            );
-        });
+    ".admin-only-tab, .admin-only-page, .admin-only-control"
+).forEach(function (el) {
+    if (!admin) {
+        el.style.setProperty("display", "none", "important");
+    } else if (el.classList.contains("admin-only-page")) {
+        el.style.setProperty("display", "block", "important");
+    } else {
+        el.style.setProperty("display", "block", "important");
+    }
+});
 
         const button = $("adminAccessButton");
 
