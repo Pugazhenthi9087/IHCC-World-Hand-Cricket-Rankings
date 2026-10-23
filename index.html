@@ -136,6 +136,23 @@ th,td{font-size:12px;padding:9px 5px}
 .page{padding:12px}
 }
 </style>
+
+<!-- IHCC Supabase Connection -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+window.IHCC_SUPABASE_URL =
+    "https://ivjvblceztjuptgfihpm.supabase.co";
+
+window.IHCC_SUPABASE_KEY =
+    "sb_publishable_-HZBV9An2EJqfVP0cU3AbA_ab-S4tSx";
+
+window.IHCC_SUPABASE = window.supabase.createClient(
+    window.IHCC_SUPABASE_URL,
+    window.IHCC_SUPABASE_KEY
+);
+</script>
+
 </head>
 
 <body>
