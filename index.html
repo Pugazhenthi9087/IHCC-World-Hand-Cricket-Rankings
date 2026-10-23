@@ -153,6 +153,19 @@ window.IHCC_SUPABASE = window.supabase.createClient(
 );
 </script>
 
+<script>
+window.addEventListener("load", function () {
+    if (
+        window.IHCC_SUPABASE &&
+        typeof window.IHCC_SUPABASE.from === "function"
+    ) {
+        console.log("IHCC Supabase library loaded successfully.");
+    } else {
+        console.error("IHCC Supabase library failed to load.");
+    }
+});
+</script>
+
 </head>
 
 <body>
