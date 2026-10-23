@@ -1422,8 +1422,12 @@ function submitMatch() {
     }
 
     const tournament = document
-        .getElementById("tournamentName")
-        .value.trim();
+    .getElementById("tournament")
+    .value.trim();
+
+const matchType = document
+    .getElementById("matchType")
+    .value;
 
     const team1 = document.getElementById("team1").value;
     const team2 = document.getElementById("team2").value;
