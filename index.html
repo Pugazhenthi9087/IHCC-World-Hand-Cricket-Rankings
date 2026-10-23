@@ -1613,6 +1613,75 @@ function renderHistory() {
         }).join("");
 }
 
+// ================= DELETE ONE MATCH =================
+
+function deleteMatch(index) {
+    if (!window.__ihccAdmin) {
+        openAdminModal();
+        return;
+    }
+
+    if (index < 0 || index >= newMatches.length) {
+        alert("Match not found.");
+        return;
+    }
+
+    const match = newMatches[index];
+
+    if (!confirm(
+        "Delete this match?\n\n" +
+        match.team1 + " vs " + match.team2 +
+        "\n\nRankings will be recalculated."
+    )) {
+        return;
+    }
+
+    newMatches.splice(index, 1);
+
+    rankings = {};
+
+    officialTeams.forEach(t => {
+        rankings[t.name] = {
+            name: t.name,
+            flag: t.flag,
+            rating: t.rating,
+            points: t.points,
+            wins: 0,
+            losses: 0,
+            noResults: 0
+        };
+    });
+
+    newMatches.forEach(m => {
+        const data = calculateMatch(
+            m.team1,
+            m.team2,
+            m.result
+        );
+
+        rankings[m.team1].points += Number(m.points1) || 0;
+        rankings[m.team2].points += Number(m.points2) || 0;
+
+        m.oldA = data.oldA;
+        m.oldB = data.oldB;
+        m.newA = data.newA;
+        m.newB = data.newB;
+        m.changeA = data.changeA;
+        m.changeB = data.changeB;
+    });
+
+    save();
+    renderAll();
+
+    document.getElementById("calculation").innerHTML = `
+        <div class="result">
+            ✅ Match deleted successfully.
+            <br>
+            Rankings have been recalculated.
+        </div>
+    `;
+}
+
 
 // ================= PAGE NAVIGATION =================
 
