@@ -1443,9 +1443,13 @@ const matchType = document
     ) || 0;
 
     if (!tournament) {
-        alert("Enter the tournament name.");
-        return;
-    }
+    alert(
+        matchType === "series"
+            ? "Enter the series name."
+            : "Enter the tournament name."
+    );
+    return;
+}
 
     if (team1 === team2) {
         alert("Choose two different teams.");
