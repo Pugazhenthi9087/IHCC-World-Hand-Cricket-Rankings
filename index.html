@@ -320,9 +320,15 @@ The system calculates both teams' new Elo ratings.
 A No Result causes no Elo change.
 </div>
 
-<label>Tournament Name</label>
-<input id="tournamentName" placeholder="Example: Major World Cup 3">
+<label>Match Type</label>
+<select id="matchType" onchange="updateMatchTypeLabel()">
+    <option value="tournament">Tournament</option>
+    <option value="series">Series</option>
+</select>
 
+<label id="matchNameLabel">Tournament Name</label>
+<input id="tournament"
+placeholder="Example: Mini World Cup 5">
 <label>Team 1</label>
 <select id="team1"></select>
 
@@ -1740,6 +1746,20 @@ function resetData() {
 
 
 // ================= UPDATE ALL SECTIONS =================
+
+function updateMatchTypeLabel() {
+    const matchType = document.getElementById("matchType").value;
+    const label = document.getElementById("matchNameLabel");
+    const input = document.getElementById("tournament");
+
+    if (matchType === "series") {
+        label.textContent = "Series Name";
+        input.placeholder = "Example: India vs Australia Series";
+    } else {
+        label.textContent = "Tournament Name";
+        input.placeholder = "Example: Mini World Cup 5";
+    }
+}
 
 function renderAll() {
     renderRankings();
