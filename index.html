@@ -1555,50 +1555,62 @@ function renderHistory() {
     }
 
     box.innerHTML = newMatches
-        .slice()
+        .map((m, index) => ({ match: m, index }))
         .reverse()
-        .map(m => `
-            <div class="match">
-                <strong>🏆 ${esc(m.tournament)}</strong>
+        .map(item => {
+            const m = item.match;
+            const index = item.index;
 
-                <br><br>
+            return `
+                <div class="match">
+                    <strong>🏆 ${esc(m.tournament)}</strong>
 
-                ${getFlag(m.team1)}
-                ${esc(m.team1)}
+                    <br><br>
 
-                <b>vs</b>
+                    ${getFlag(m.team1)}
+                    ${esc(m.team1)}
+                    <b>vs</b>
+                    ${getFlag(m.team2)}
+                    ${esc(m.team2)}
 
-                ${getFlag(m.team2)}
-                ${esc(m.team2)}
+                    <br><br>
 
-                <br><br>
+                    ${
+                        m.result === "nr"
+                            ? "⚪ No Result"
+                            : `🏆 ${getFlag(m.winner)}
+                               ${esc(m.winner)} won`
+                    }
 
-                ${
-                    m.result === "nr"
-                        ? "⚪ No Result"
-                        : `🏆 ${getFlag(m.winner)}
-                           ${esc(m.winner)} won`
-                }
+                    <br><br>
 
-                <br><br>
+                    ${esc(m.team1)}:
+                    ${Number(m.oldA).toFixed(2)}
+                    →
+                    ${Number(m.newA).toFixed(2)}
 
-                ${esc(m.team1)}:
-                ${Number(m.oldA).toFixed(2)}
-                →
-                ${Number(m.newA).toFixed(2)}
+                    <br>
 
-                <br>
+                    ${esc(m.team2)}:
+                    ${Number(m.oldB).toFixed(2)}
+                    →
+                    ${Number(m.newB).toFixed(2)}
 
-                ${esc(m.team2)}:
-                ${Number(m.oldB).toFixed(2)}
-                →
-                ${Number(m.newB).toFixed(2)}
+                    <br><br>
 
-                <br><br>
+                    <span class="small">${esc(m.date)}</span>
 
-                <span class="small">${esc(m.date)}</span>
-            </div>
-        `).join("");
+                    <br><br>
+
+                    <button
+                        class="btn red admin-only-control"
+                        type="button"
+                        onclick="deleteMatch(${index})">
+                        🗑️ Delete This Match
+                    </button>
+                </div>
+            `;
+        }).join("");
 }
 
 
