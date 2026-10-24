@@ -1083,6 +1083,11 @@ function save() {
         "ihccMatches",
         JSON.stringify(newMatches)
     );
+
+    localStorage.setItem(
+        "ihccMatchesPlayed",
+        JSON.stringify(matchesPlayed)
+    );
 }
 
 function round(n) {
