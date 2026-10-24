@@ -1578,7 +1578,11 @@ function renderHistory() {
 
             return `
                 <div class="match">
-                    <strong>🏆 ${esc(m.tournament)}</strong>
+                    <strong>
+    ${m.matchType === "series" ? "🏏" : "🏆"}
+    ${m.matchType === "series" ? "Series" : "Tournament"}:
+    ${esc(m.tournament)}
+</strong>
 
                     <br><br>
 
