@@ -1073,6 +1073,18 @@ function createBaseline() {
     }
 }
 
+    const savedMatchesPlayed =
+        localStorage.getItem("ihccMatchesPlayed");
+
+    if (savedMatchesPlayed) {
+        try {
+            Object.assign(
+                matchesPlayed,
+                JSON.parse(savedMatchesPlayed)
+            );
+        } catch (e) {}
+    }
+
 function save() {
     localStorage.setItem(
         "ihccRankings",
