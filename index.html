@@ -1071,8 +1071,6 @@ function createBaseline() {
     } catch (e) {
         newMatches = [];
     }
-}
-
     const savedMatchesPlayed =
         localStorage.getItem("ihccMatchesPlayed");
 
@@ -1084,6 +1082,7 @@ function createBaseline() {
             );
         } catch (e) {}
     }
+}
 
 function save() {
     localStorage.setItem(
