@@ -1458,6 +1458,9 @@ const matchType = document
 
     const data = calculateMatch(team1, team2, result);
 
+matchesPlayed[team1] = (matchesPlayed[team1] || 0) + 1;
+matchesPlayed[team2] = (matchesPlayed[team2] || 0) + 1;
+
     rankings[team1].points += points1;
     rankings[team2].points += points2;
 
