@@ -1470,6 +1470,16 @@ const matchType = document
     .getElementById("matchType")
     .value;
 
+const stageType = matchType === "tournament"
+    ? document.getElementById("stageType").value
+    : "";
+
+const nrrInput = document.getElementById("matchNRR");
+
+const nrr = matchType === "tournament" && nrrInput.value.trim() !== ""
+    ? Number(nrrInput.value)
+    : null;
+
     const team1 = document.getElementById("team1").value;
     const team2 = document.getElementById("team2").value;
 
