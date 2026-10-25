@@ -1805,17 +1805,19 @@ function resetData() {
 // ================= UPDATE ALL SECTIONS =================
 
 function updateMatchTypeLabel() {
-    const matchType = document.getElementById("matchType").value;
-    const label = document.getElementById("matchNameLabel");
-    const input = document.getElementById("tournament");
+const matchType = document.getElementById("matchType").value;
+const label = document.getElementById("matchNameLabel");
+const input = document.getElementById("tournament");
+const tournamentFields = document.getElementById("tournamentFields");
 
-    if (matchType === "series") {
-        label.textContent = "Series Name";
-        input.placeholder = "Example: India vs Australia Series";
-    } else {
-        label.textContent = "Tournament Name";
-        input.placeholder = "Example: Mini World Cup 5";
-    }
+if (matchType === "series") {
+    label.textContent = "Series Name";
+    input.placeholder = "Example: India vs Australia Series";
+    tournamentFields.style.display = "none";
+} else {
+    label.textContent = "Tournament Name";
+    input.placeholder = "Example: Mini World Cup 5";
+    tournamentFields.style.display = "block";
 }
 
 function renderAll() {
