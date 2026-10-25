@@ -322,14 +322,39 @@ A No Result causes no Elo change.
 
 <label>Match Type</label>
 <select id="matchType" onchange="updateMatchTypeLabel()">
-    <option value="tournament">Tournament</option>
-    <option value="series">Series</option>
+<option value="tournament">Tournament</option>
+<option value="series">Series</option>
 </select>
 
 <label id="matchNameLabel">Tournament Name</label>
-<input id="tournament"
-placeholder="Example: Mini World Cup 5">
-<label>Team 1</label>
+<input id="tournament" placeholder="Example: Mini World Cup 5">
+
+<div id="tournamentFields"><label for="stageType">Tournament Stage</label>
+<select id="stageType">
+    <option value="League Match">League Match</option>
+    <option value="Super 4">Super 4</option>
+    <option value="Super 6">Super 6</option>
+    <option value="Super 8">Super 8</option>
+    <option value="Super 10">Super 10</option>
+    <option value="Super 12">Super 12</option>
+    <option value="Eliminator 1">Eliminator 1</option>
+    <option value="Eliminator 2">Eliminator 2</option>
+    <option value="Eliminator 3">Eliminator 3</option>
+    <option value="Eliminator 4">Eliminator 4</option>
+    <option value="Semifinal 1">Semifinal 1</option>
+    <option value="Semifinal 2">Semifinal 2</option>
+    <option value="Final">Final</option>
+</select>
+
+<label for="matchNRR">Net Run Rate (NRR)</label>
+<input
+    id="matchNRR"
+    type="number"
+    step="any"
+    placeholder="Enter latest NRR manually"
+>
+
+</div><label>Team 1</label>
 <select id="team1"></select>
 
 <label>Team 2</label>
