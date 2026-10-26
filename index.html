@@ -1482,10 +1482,17 @@ const stageType = matchType === "tournament"
     ? document.getElementById("stageType").value
     : "";
 
-const nrrInput = document.getElementById("matchNRR");
+const team1NRRInput = document.getElementById("team1NRR");
+const team2NRRInput = document.getElementById("team2NRR");
 
-const nrr = matchType === "tournament" && nrrInput.value.trim() !== ""
-    ? Number(nrrInput.value)
+const team1NRR = matchType === "tournament" &&
+    team1NRRInput.value.trim() !== ""
+    ? Number(team1NRRInput.value)
+    : null;
+
+const team2NRR = matchType === "tournament" &&
+    team2NRRInput.value.trim() !== ""
+    ? Number(team2NRRInput.value)
     : null;
 
     const team1 = document.getElementById("team1").value;
