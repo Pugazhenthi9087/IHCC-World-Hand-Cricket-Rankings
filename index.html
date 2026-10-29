@@ -1755,7 +1755,7 @@ function deleteMatch(index) {
     }
 
     newMatches.splice(index, 1);
-
+    recalculateMatchesPlayed();
     rankings = {};
 
     officialTeams.forEach(t => {
@@ -1788,6 +1788,7 @@ function deleteMatch(index) {
         m.changeB = data.changeB;
     });
 
+    recalculateMatchesPlayed();
     save();
     renderAll();
 
