@@ -1717,6 +1717,22 @@ function renderHistory() {
 
 // ================= DELETE ONE MATCH =================
 
+function recalculateMatchesPlayed() {
+    Object.keys(matchesPlayed).forEach(team => {
+        delete matchesPlayed[team];
+    });
+
+    Object.assign(matchesPlayed, baselineMatchesPlayed);
+
+    newMatches.forEach(match => {
+        matchesPlayed[match.team1] =
+            (matchesPlayed[match.team1] || 0) + 1;
+
+        matchesPlayed[match.team2] =
+            (matchesPlayed[match.team2] || 0) + 1;
+    });
+}
+
 function deleteMatch(index) {
     if (!window.__ihccAdmin) {
         openAdminModal();
