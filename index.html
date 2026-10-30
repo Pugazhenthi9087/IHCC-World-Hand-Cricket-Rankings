@@ -1584,10 +1584,19 @@ const team2NRR = matchType === "tournament" &&
     return;
 }
 
+    if (
+    matchType === "tournament" &&
+    ["League Match", "Super 4", "Super 6", "Super 8", "Super 10", "Super 12"].includes(stageType) &&
+    !tableGroup
+) {
+    alert("Select the correct Group / Points Table.");
+    return;
+}
+    
     if (team1 === team2) {
         alert("Choose two different teams.");
         return;
-    }
+}
 
     const data = calculateMatch(team1, team2, result);
 
