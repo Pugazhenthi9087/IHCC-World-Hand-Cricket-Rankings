@@ -1280,6 +1280,30 @@ function showTournament(i) {
     document.getElementById("tournamentDetails").style.display =
         "block";
 
+    // Get newly entered matches for this tournament only
+    const addedMatches = newMatches.filter(m =>
+        m.matchType === "tournament" &&
+        m.tournament === t.name
+    );
+
+    // Separate league/intermediate matches from knockouts
+    const numberedStages = [
+        "League Match",
+        "Super 4",
+        "Super 6",
+        "Super 8",
+        "Super 10",
+        "Super 12"
+    ];
+
+    const addedNumberedMatches = addedMatches.filter(m =>
+        numberedStages.includes(m.stageType)
+    );
+
+    const addedKnockoutMatches = addedMatches.filter(m =>
+        !numberedStages.includes(m.stageType)
+    );
+
     let h = `
         <h2>🏆 ${esc(t.name)}</h2>
 
@@ -1299,6 +1323,7 @@ function showTournament(i) {
         </div>
     `;
 
+    // Existing points tables
     t.tables.forEach(tb => {
         h += `
             <h3>📊 ${esc(tb.title)}</h3>
@@ -1342,27 +1367,41 @@ function showTournament(i) {
         `;
     });
 
+    // Existing and newly entered numbered matches
     h += `<h3>🏏 Match Results</h3>`;
 
-    t.matches.forEach((m, j) => {
+    const allNumberedMatches = [
+        ...t.matches,
+        ...addedNumberedMatches
+    ];
+
+    allNumberedMatches.forEach((m, j) => {
+        const team1 = Array.isArray(m) ? m[0] : m.team1;
+        const team2 = Array.isArray(m) ? m[1] : m.team2;
+        const result = Array.isArray(m) ? m[2] : m.result;
+
         h += `
             <div class="match">
                 <strong>Match ${j + 1}</strong>
                 <br>
 
-                ${getFlag(m[0])} ${esc(m[0])}
+                ${getFlag(team1)} ${esc(team1)}
                 <b>vs</b>
-                ${getFlag(m[1])} ${esc(m[1])}
+                ${getFlag(team2)} ${esc(team2)}
                 <br>
         `;
 
-        if (m[2] === "nr") {
+        if (result === "nr") {
             h += `<span class="nr">⚪ No Result</span>`;
         } else {
+            const winner = Array.isArray(m)
+                ? result
+                : m.winner;
+
             h += `
                 <span class="win">
-                    🏆 ${getFlag(m[2])}
-                    ${esc(m[2])} won
+                    🏆 ${getFlag(winner)}
+                    ${esc(winner)} won
                 </span>
             `;
         }
@@ -1370,6 +1409,7 @@ function showTournament(i) {
         h += `</div>`;
     });
 
+    // Existing and newly entered knockout matches
     h += `<h3>🏆 Knockouts</h3>`;
 
     h += t.knockouts.map(x => `
@@ -1377,6 +1417,22 @@ function showTournament(i) {
             🏆 ${esc(x)}
         </div>
     `).join("");
+
+    addedKnockoutMatches.forEach(m => {
+        const outcome = m.result === "nr"
+            ? "No Result"
+            : `${m.winner} won`;
+
+        h += `
+            <div class="match">
+                🏆 ${esc(m.stageType)}:
+                ${getFlag(m.team1)} ${esc(m.team1)}
+                vs
+                ${getFlag(m.team2)} ${esc(m.team2)}
+                — ${esc(outcome)}
+            </div>
+        `;
+    });
 
     document.getElementById("tournamentOutput").innerHTML = h;
 }
