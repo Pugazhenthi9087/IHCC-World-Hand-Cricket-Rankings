@@ -330,7 +330,7 @@ A No Result causes no Elo change.
 <input id="tournament" placeholder="Example: Mini World Cup 5">
 
 <div id="tournamentFields"><label for="stageType">Tournament Stage</label>
-<select id="stageType">
+<select id="stageType" onchange="updateTableGroupOptions()">
     <option value="League Match">League Match</option>
     <option value="Super 4">Super 4</option>
     <option value="Super 6">Super 6</option>
