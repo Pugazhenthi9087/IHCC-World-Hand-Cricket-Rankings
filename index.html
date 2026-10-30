@@ -1914,6 +1914,46 @@ function resetData() {
 
 // ================= UPDATE ALL SECTIONS =================
 
+function updateTableGroupOptions() {
+    const stage = document.getElementById("stageType").value;
+    const select = document.getElementById("tableGroup");
+
+    const numberedStages = [
+        "League Match",
+        "Super 4",
+        "Super 6",
+        "Super 8",
+        "Super 10",
+        "Super 12"
+    ];
+
+    if (!numberedStages.includes(stage)) {
+        select.innerHTML = '<option value="">Not required</option>';
+        select.disabled = true;
+        return;
+    }
+
+    select.disabled = false;
+
+    let options = [];
+
+    if (stage === "League Match") {
+        options = ["Group A", "Group B", "Group C", "Group D", "Group E"];
+    } else {
+        options = [
+            stage + " A",
+            stage + " B",
+            stage + " C"
+        ];
+    }
+
+    select.innerHTML =
+        '<option value="">Select Group / Table</option>' +
+        options.map(option =>
+            `<option value="${option}">${option}</option>`
+        ).join("");
+}
+
 function updateMatchTypeLabel() {
 const matchType = document.getElementById("matchType").value;
 const label = document.getElementById("matchNameLabel");
