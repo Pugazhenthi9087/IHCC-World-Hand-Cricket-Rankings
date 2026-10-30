@@ -154,15 +154,29 @@ window.IHCC_SUPABASE = window.supabase.createClient(
 </script>
 
 <script>
-window.addEventListener("load", function () {
-    if (
-        window.IHCC_SUPABASE &&
-        typeof window.IHCC_SUPABASE.from === "function"
-    ) {
-        console.log("IHCC Supabase library loaded successfully.");
-    } else {
-        console.error("IHCC Supabase library failed to load.");
+window.addEventListener("load", async function () {
+    const db = window.IHCC_SUPABASE;
+
+    if (!db) {
+        console.error("Supabase client not initialized.");
+        return;
     }
+
+    console.log("Supabase library loaded.");
+
+    const { data, error } = await db
+        .from("ihcc_teams")
+        .select("team_name")
+        .limit(5);
+
+    if (error) {
+        console.error("Supabase database test failed:", error.message);
+        alert("Supabase connection test failed. Check the browser console.");
+        return;
+    }
+
+    console.log("Supabase database connected. Teams:", data);
+    alert("Supabase database connected successfully!");
 });
 </script>
 
