@@ -2064,113 +2064,109 @@ renderAll();
 (function () {
     "use strict";
 
-    const ADMIN_PIN = "IHCC2026";
-
-    let admin = false;
+    const db = window.IHCC_SUPABASE;
 
     function $(id) {
         return document.getElementById(id);
     }
 
-    function updateAdminState() {
+    function updateAdminState(isAdmin) {
+        window.__ihccAdmin = isAdmin;
+
         document.querySelectorAll(
-    ".admin-only-tab, .admin-only-page, .admin-only-control"
-).forEach(function (el) {
-    if (!admin) {
-        el.style.setProperty("display", "none", "important");
-    } else if (el.classList.contains("admin-only-page")) {
-        el.style.setProperty("display", "block", "important");
-    } else {
-        el.style.setProperty("display", "block", "important");
-    }
-});
+            ".admin-only-tab, .admin-only-page, .admin-only-control"
+        ).forEach(function (el) {
+            el.style.setProperty(
+                "display",
+                isAdmin ? "block" : "none",
+                "important"
+            );
+        });
 
-        const button = $("adminAccessButton");
+        $("adminAccessButton").textContent =
+            isAdmin ? "🔓 Admin ON" : "🔐 Admin";
+        
+        $("adminUnlock").style.display =
+            isAdmin ? "none" : "block";
 
-        if (button) {
-            button.textContent = admin
-                ? "🔓 Admin ON"
-                : "🔐 Admin";
-        }
-
-        const unlock = $("adminUnlock");
-        const lock = $("adminLock");
-
-        if (unlock) {
-            unlock.style.display = admin ? "none" : "block";
-        }
-
-        if (lock) {
-            lock.style.display = admin ? "block" : "none";
-        }
+        $("adminLock").style.display =
+            isAdmin ? "block" : "none";
     }
 
     window.openAdminModal = function () {
-        const modal = $("adminModal");
-        const input = $("adminPinInput");
-        const error = $("adminError");
-
-        if (!modal) return;
-
-        modal.style.display = "flex";
-
-        if (error) {
-            error.textContent = "";
-        }
-
-        if (input) {
-            input.value = "";
-
-            setTimeout(function () {
-                input.focus();
-            }, 50);
-        }
+        $("adminModal").style.display = "flex";
+        $("adminError").textContent = "";
     };
 
-    function unlockAdmin() {
-        const input = $("adminPinInput");
-        const error = $("adminError");
+    async function verifyAdmin(user) {
+        const { data, error } = await db
+            .from("ihcc_admins")
+            .select("user_id")
+            .eq("user_id", user.id)
+            .maybeSingle();
 
-        if (!input) return;
+        if (error) {
+            throw new Error("Admin verification failed: " + error.message);
+        }
 
-        if (input.value.trim() === ADMIN_PIN) {
-            admin = true;
-            window.__ihccAdmin = true;
+        if (!data) {
+            throw new Error("This account is not registered as an IHCC admin.");
+        }
 
-            input.value = "";
+        updateAdminState(true);
+        $("adminModal").style.display = "none";
 
-            if (error) {
-                error.textContent = "";
-            }
+        openPage("match", document.querySelector(".admin-only-tab"));
+    }
 
-            $("adminModal").style.display = "none";
+    async function unlockAdmin() {
+        const email = $("adminEmail").value.trim();
+        const password = $("adminPassword").value;
 
-            updateAdminState();
+        $("adminError").textContent = "";
 
-            openPage(
-                "match",
-                document.querySelector(".admin-only-tab")
-            );
+        if (!email || !password) {
+            $("adminError").textContent =
+                "Enter your email and password.";
+            return;
+        }
 
-        } else {
-            if (error) {
-                error.textContent = "❌ Incorrect Admin PIN.";
-            }
+        $("adminUnlock").disabled = true;
 
-            input.select();
+        try {
+            const { data, error } = await db.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            if (error) throw error;
+
+            await verifyAdmin(data.user);
+
+            $("adminPassword").value = "";
+
+        } catch (error) {
+            $("adminError").textContent = error.message;
+
+            await db.auth.signOut();
+            updateAdminState(false);
+
+        } finally {
+            $("adminUnlock").disabled = false;
         }
     }
 
-    function lockAdmin() {
-        admin = false;
-        window.__ihccAdmin = false;
+    async function lockAdmin() {
+        const { error } = await db.auth.signOut();
 
-        updateAdminState();
+        if (error) {
+            $("adminError").textContent = error.message;
+            return;
+        }
 
-        openPage(
-            "rankings",
-            document.querySelector('nav .tab')
-        );
+        updateAdminState(false);
+
+        openPage("rankings", document.querySelector("nav .tab"));
     }
 
     $("adminAccessButton").addEventListener(
@@ -2178,37 +2174,37 @@ renderAll();
         window.openAdminModal
     );
 
-    $("adminUnlock").addEventListener(
-        "click",
-        unlockAdmin
-    );
+    $("adminUnlock").addEventListener("click", unlockAdmin);
+    $("adminLock").addEventListener("click", lockAdmin);
 
-    $("adminLock").addEventListener(
-        "click",
-        lockAdmin
-    );
+    $("adminPassword").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") unlockAdmin();
+    });
 
-    $("adminPinInput").addEventListener(
-        "keydown",
-        function (event) {
-            if (event.key === "Enter") {
-                unlockAdmin();
-            }
+    $("adminModal").addEventListener("click", function(event) {
+        if (event.target === $("adminModal")) {
+            $("adminModal").style.display = "none";
         }
-    );
+    });
 
-    $("adminModal").addEventListener(
-        "click",
-        function (event) {
-            if (event.target === $("adminModal")) {
-                $("adminModal").style.display = "none";
+    async function restoreSession() {
+        updateAdminState(false);
+
+        try {
+            const { data, error } = await db.auth.getSession();
+
+            if (error) throw error;
+
+            if (data.session) {
+                await verifyAdmin(data.session.user);
             }
+        } catch (error) {
+            console.error("IHCC session verification:", error.message);
+            updateAdminState(false);
         }
-    );
+    }
 
-    window.__ihccAdmin = false;
-
-    updateAdminState();
+    restoreSession();
 
 })();
 </script>
