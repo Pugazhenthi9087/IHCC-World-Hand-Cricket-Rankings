@@ -2023,43 +2023,38 @@ renderAll();
 </button>
 
 
-<!-- ================= ADMIN LOGIN MODAL ================= -->
+<!-- ================= SUPABASE ADMIN LOGIN ================= -->
 
 <div id="adminModal">
-
     <div class="admin-box">
+        <h2>🔐 IHCC Admin Login</h2>
 
-        <h2>🔐 Admin Access</h2>
+        <p>Sign in using your Supabase account.</p>
 
-        <p>
-            Only the administrator can add matches
-            or reset data.
-        </p>
-
+        <label for="adminEmail">Email</label>
         <input
-            id="adminPinInput"
-            type="password"
-            inputmode="text"
-            autocomplete="off"
-            placeholder="Enter Admin PIN">
+            id="adminEmail"
+            type="email"
+            autocomplete="username"
+            placeholder="Your admin email">
 
-        <button
-            id="adminUnlock"
-            type="button">
-            Unlock
+        <label for="adminPassword">Password</label>
+        <input
+            id="adminPassword"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Your Supabase password">
+
+        <button id="adminUnlock" type="button">
+            Sign In
         </button>
 
-        <button
-            id="adminLock"
-            type="button"
-            style="display:none">
-            Lock Admin
+        <button id="adminLock" type="button" style="display:none">
+            Sign Out
         </button>
 
         <div id="adminError"></div>
-
     </div>
-
 </div>
 
 
