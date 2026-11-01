@@ -2082,10 +2082,17 @@ function renderAll() {
 
 // ================= INITIALIZE WEBSITE =================
 
-createBaseline();
-loadSelects();
-updateTableGroupOptions();
-renderAll();
+async function initializeIHCC() {
+    createBaseline();
+    loadSelects();
+    updateTableGroupOptions();
+
+    await loadMatchesFromSupabase();
+
+    renderAll();
+}
+
+initializeIHCC();
 
 </script>
 
