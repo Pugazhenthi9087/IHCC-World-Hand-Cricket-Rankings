@@ -1789,6 +1789,7 @@ async function submitMatch() {
     renderAll();
 }
 
+
 // ================= MATCH HISTORY =================
 
 function renderHistory() {
@@ -1801,7 +1802,10 @@ function renderHistory() {
             </p>
         `;
         return;
-    }.map((m, index) => ({ match: m, index }))
+    }
+
+    box.innerHTML = newMatches
+        .map((m, index) => ({ match: m, index }))
         .reverse()
         .map(item => {
             const m = item.match;
@@ -1946,6 +1950,7 @@ async function deleteMatch(index) {
         </div>
     `;
 }
+
 
 // ================= PAGE NAVIGATION =================
 
