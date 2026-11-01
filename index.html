@@ -1613,84 +1613,81 @@ function calculateMatch(teamA, teamB, result) {
 
 // ================= SUBMIT A MATCH =================
 
-function submitMatch() {
+async function submitMatch() {
     if (!window.__ihccAdmin) {
         openAdminModal();
         return;
     }
 
-    const tournament = document
-    .getElementById("tournament")
-    .value.trim();
+    const db = window.IHCC_SUPABASE;
 
-const matchType = document
-    .getElementById("matchType")
-    .value;
+    const tournament = document.getElementById("tournament").value.trim();
+    const matchType = document.getElementById("matchType").value;
 
-const stageType = matchType === "tournament"
-    ? document.getElementById("stageType").value
-    : "";
+    const stageType = matchType === "tournament"
+        ? document.getElementById("stageType").value
+        : "";
 
-const tableGroup = matchType === "tournament"
-    ? document.getElementById("tableGroup").value
-    : "";
+    const tableGroup = matchType === "tournament"
+        ? document.getElementById("tableGroup").value
+        : "";
 
-const team1NRRInput = document.getElementById("team1NRR");
-const team2NRRInput = document.getElementById("team2NRR");
+    const team1NRRInput = document.getElementById("team1NRR");
+    const team2NRRInput = document.getElementById("team2NRR");
 
-const team1NRR = matchType === "tournament" &&
-    team1NRRInput.value.trim() !== ""
-    ? Number(team1NRRInput.value)
-    : null;
+    const team1NRR = matchType === "tournament" &&
+        team1NRRInput.value.trim() !== ""
+        ? Number(team1NRRInput.value)
+        : null;
 
-const team2NRR = matchType === "tournament" &&
-    team2NRRInput.value.trim() !== ""
-    ? Number(team2NRRInput.value)
-    : null;
+    const team2NRR = matchType === "tournament" &&
+        team2NRRInput.value.trim() !== ""
+        ? Number(team2NRRInput.value)
+        : null;
 
     const team1 = document.getElementById("team1").value;
     const team2 = document.getElementById("team2").value;
-
     const result = document.getElementById("matchResult").value;
 
-    const points1 = Number(
-        document.getElementById("points1").value
-    ) || 0;
-
-    const points2 = Number(
-        document.getElementById("points2").value
-    ) || 0;
+    const points1 = Number(document.getElementById("points1").value) || 0;
+    const points2 = Number(document.getElementById("points2").value) || 0;
 
     if (!tournament) {
-    alert(
-        matchType === "series"
+        alert(matchType === "series"
             ? "Enter the series name."
-            : "Enter the tournament name."
-    );
-    return;
-}
+            : "Enter the tournament name.");
+        return;
+    }
 
     if (
-    matchType === "tournament" &&
-    ["League Match", "Super 4", "Super 6", "Super 8", "Super 10", "Super 12"].includes(stageType) &&
-    !tableGroup
-) {
-    alert("Select the correct Group / Points Table.");
-    return;
-}
-    
+        matchType === "tournament" &&
+        ["League Match", "Super 4", "Super 6", "Super 8", "Super 10", "Super 12"].includes(stageType) &&
+        !tableGroup
+    ) {
+        alert("Select the correct Group / Points Table.");
+        return;
+    }
+
     if (team1 === team2) {
         alert("Choose two different teams.");
         return;
-}
+    }
+
+    if (!rankings[team1] || !rankings[team2]) {
+        alert("Invalid team selection.");
+        return;
+    }
+
+    const { data: userData, error: userError } =
+        await db.auth.getUser();
+
+    if (userError || !userData.user) {
+        alert("Your admin session has expired. Please sign in again.");
+        openAdminModal();
+        return;
+    }
 
     const data = calculateMatch(team1, team2, result);
-
-matchesPlayed[team1] = (matchesPlayed[team1] || 0) + 1;
-matchesPlayed[team2] = (matchesPlayed[team2] || 0) + 1;
-
-    rankings[team1].points += points1;
-    rankings[team2].points += points2;
 
     const winner = result === "team1"
         ? team1
@@ -1698,99 +1695,99 @@ matchesPlayed[team2] = (matchesPlayed[team2] || 0) + 1;
             ? team2
             : "No Result";
 
-    newMatches.push({
-    matchType,
-    tournament,
-    stageType,
-    tableGroup,
-    team1NRR,
-    team2NRR,
-    team1,
-    team2,
-    result,
-    winner,
-    points1,
-    points2,
+    const matchRecord = {
+        match_type: matchType,
+        event_name: tournament,
+        team1: team1,
+        team2: team2,
+        winner: winner,
+        stage: stageType,
+        result: result,
+        table_group: tableGroup || null,
+        team1_nrr: team1NRR,
+        team2_nrr: team2NRR,
+        points1: points1,
+        points2: points2,
+        old_a: data.oldA,
+        old_b: data.oldB,
+        new_a: data.newA,
+        new_b: data.newB,
+        change_a: data.changeA,
+        change_b: data.changeB,
+        created_by: userData.user.id
+    };
+
+    const { data: savedRecord, error: saveError } = await db
+        .from("ihcc_matches")
+        .insert(matchRecord)
+        .select()
+        .single();
+
+    if (saveError) {
+        rebuildRankingsFromMatches();
+        alert("Match could not be saved to the database:\n" + saveError.message);
+        return;
+    }
+
+    const savedMatch = {
+        id: savedRecord.id,
+        matchType,
+        tournament,
+        stageType,
+        tableGroup,
+        team1NRR,
+        team2NRR,
+        team1,
+        team2,
+        result,
+        winner,
+        points1,
+        points2,
         oldA: data.oldA,
         oldB: data.oldB,
         newA: data.newA,
         newB: data.newB,
         changeA: data.changeA,
         changeB: data.changeB,
-        date: new Date().toLocaleString()
-    });
+        date: savedRecord.created_at
+            ? new Date(savedRecord.created_at).toLocaleString()
+            : new Date().toLocaleString()
+    };
+
+    matchesPlayed[team1] = (matchesPlayed[team1] || 0) + 1;
+    matchesPlayed[team2] = (matchesPlayed[team2] || 0) + 1;
+
+    rankings[team1].points += points1;
+    rankings[team2].points += points2;
+
+    newMatches.push(savedMatch);
 
     save();
 
-    if (result === "nr") {
-        document.getElementById("calculation").innerHTML = `
-            <div class="result">
-                <b>⚪ No Result</b>
-                <br><br>
-
-                ${esc(team1)}:
-                ${data.oldA.toFixed(2)}
-                →
-                <b>${data.newA.toFixed(2)}</b>
-
-                <br>
-
-                ${esc(team2)}:
-                ${data.oldB.toFixed(2)}
-                →
-                <b>${data.newB.toFixed(2)}</b>
-
-                <br><br>
-                Elo change: <b>0.00</b>
-            </div>
-        `;
-    } else {
-        document.getElementById("calculation").innerHTML = `
-            <div class="result">
-                <b>⚡ Elo Updated</b>
-                <br><br>
-
-                ${getFlag(team1)}
-                ${esc(team1)}:
-                ${data.oldA.toFixed(2)}
-                →
-                <b>${data.newA.toFixed(2)}</b>
-
-                <span class="${
-                    data.changeA >= 0 ? "changeUp" : "changeDown"
-                }">
-                    (${signed(data.changeA)})
-                </span>
-
-                <br>
-
-                ${getFlag(team2)}
-                ${esc(team2)}:
-                ${data.oldB.toFixed(2)}
-                →
-                <b>${data.newB.toFixed(2)}</b>
-
-                <span class="${
-                    data.changeB >= 0 ? "changeUp" : "changeDown"
-                }">
-                    (${signed(data.changeB)})
-                </span>
-
-                <br><br>
-                🏆 ${getFlag(winner)} ${esc(winner)} won
-            </div>
-        `;
-    }
+    document.getElementById("calculation").innerHTML = `
+        <div class="result">
+            <b>✅ Match saved successfully to IHCC database.</b>
+            <br><br>
+            ${esc(team1)}: ${data.oldA.toFixed(2)} →
+            <b>${data.newA.toFixed(2)}</b>
+            <br>
+            ${esc(team2)}: ${data.oldB.toFixed(2)} →
+            <b>${data.newB.toFixed(2)}</b>
+            <br><br>
+            ${result === "nr"
+                ? "⚪ No Result — no Elo change."
+                : `🏆 ${esc(winner)} won.`}
+        </div>
+    `;
 
     document.getElementById("tournament").value = "";
-    if (team1NRRInput) team1NRRInput.value = "";
-    if (team2NRRInput) team2NRRInput.value = "";
+    team1NRRInput.value = "";
+    team2NRRInput.value = "";
     document.getElementById("points1").value = 0;
     document.getElementById("points2").value = 0;
 
     renderAll();
 }
-
 
 // ================= MATCH HISTORY =================
 
@@ -1804,10 +1801,7 @@ function renderHistory() {
             </p>
         `;
         return;
-    }
-
-    box.innerHTML = newMatches
-        .map((m, index) => ({ match: m, index }))
+    }.map((m, index) => ({ match: m, index }))
         .reverse()
         .map(item => {
             const m = item.match;
