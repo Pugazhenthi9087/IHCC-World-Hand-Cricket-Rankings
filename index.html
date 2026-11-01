@@ -153,30 +153,6 @@ window.IHCC_SUPABASE = window.supabase.createClient(
 );
 </script>
 
-<script>
-window.addEventListener("load", async function () {
-    const db = window.IHCC_SUPABASE;
-
-    if (!db) {
-        alert("Supabase client is missing.");
-        return;
-    }
-
-    const { data, error } = await db
-        .from("ihcc_teams")
-        .select("*")
-        .limit(1);
-
-    if (error) {
-        alert("Supabase error: " + error.message);
-        console.error(error);
-        return;
-    }
-
-    alert("Connected successfully! Teams found: " + data.length);
-});
-</script>
-
 </head>
 
 <body>
