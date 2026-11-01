@@ -1128,6 +1128,105 @@ function save() {
     );
 }
 
+// ================= SUPABASE MATCH SYNC =================
+
+async function loadMatchesFromSupabase() {
+    const db = window.IHCC_SUPABASE;
+
+    const { data, error } = await db
+        .from("ihcc_matches")
+        .select("*")
+        .order("created_at", { ascending: true });
+
+    if (error) {
+        console.error("Supabase match loading error:", error);
+        alert("Could not load matches from Supabase: " + error.message);
+        return false;
+    }
+
+    newMatches = (data || []).map(row => ({
+        id: row.id,
+        matchType: row.match_type,
+        tournament: row.event_name,
+        stageType: row.stage || "",
+        tableGroup: row.table_group || "",
+        team1NRR: row.team1_nrr,
+        team2NRR: row.team2_nrr,
+        team1: row.team1,
+        team2: row.team2,
+        result: row.result,
+        winner: row.winner,
+        points1: Number(row.points1) || 0,
+        points2: Number(row.points2) || 0,
+        oldA: Number(row.old_a),
+        oldB: Number(row.old_b),
+        newA: Number(row.new_a),
+        newB: Number(row.new_b),
+        changeA: Number(row.change_a),
+        changeB: Number(row.change_b),
+        date: row.created_at
+            ? new Date(row.created_at).toLocaleString()
+            : ""
+    }));
+
+    rebuildRankingsFromMatches();
+    save();
+
+    return true;
+}
+
+
+function rebuildRankingsFromMatches() {
+    rankings = {};
+
+    officialTeams.forEach(t => {
+        rankings[t.name] = {
+            name: t.name,
+            flag: t.flag,
+            rating: t.rating,
+            points: t.points,
+            wins: 0,
+            losses: 0,
+            noResults: 0
+        };
+    });
+
+    Object.keys(matchesPlayed).forEach(team => {
+        delete matchesPlayed[team];
+    });
+
+    Object.assign(matchesPlayed, baselineMatchesPlayed);
+
+    newMatches.forEach(m => {
+        if (!rankings[m.team1] || !rankings[m.team2]) {
+            console.error("Unknown team in saved match:", m);
+            return;
+        }
+
+        const data = calculateMatch(
+            m.team1,
+            m.team2,
+            m.result
+        );
+
+        rankings[m.team1].points += Number(m.points1) || 0;
+        rankings[m.team2].points += Number(m.points2) || 0;
+
+        matchesPlayed[m.team1] =
+            (matchesPlayed[m.team1] || 0) + 1;
+
+        matchesPlayed[m.team2] =
+            (matchesPlayed[m.team2] || 0) + 1;
+
+        m.oldA = data.oldA;
+        m.oldB = data.oldB;
+        m.newA = data.newA;
+        m.newB = data.newB;
+        m.changeA = data.changeA;
+        m.changeB = data.changeB;
+    });
+}
+
 function round(n) {
     return Math.round(n * 100) / 100;
 }
