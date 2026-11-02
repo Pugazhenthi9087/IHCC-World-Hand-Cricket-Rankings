@@ -1155,7 +1155,10 @@ async function loadMatchesFromSupabase() {
 
     newMatches = (data || []).map(row => ({
         id: row.id,
-        matchType: row.match_type,
+        matchType: row.match_type === "world_cup"
+    ? "tournament"
+    : "series",
+matchCategory: row.match_type,
         tournament: row.event_name,
         stageType: row.stage || "",
         tableGroup: row.table_group || "",
