@@ -371,11 +371,12 @@ A No Result causes no Elo change.
 <option value="nr">No Result</option>
 </select>
 
-<label for="tableGroup">Group / Points Table</label>
-<select id="tableGroup">
-    <option value="">Select Group / Table</option>
-</select>
-
+<div id="tableGroupField">
+    <label for="tableGroup">Group / Points Table</label>
+    <select id="tableGroup">
+        <option value="">Select Group / Table</option>
+    </select>
+</div>
 <label>Team 1 Ranking Points Earned</label>
 <input id="points1" type="number" min="0" value="0">
 
@@ -2069,11 +2070,13 @@ if (matchType === "series") {
     input.placeholder = "Example: India vs Australia Series";
     tournamentFields.style.display = "none";
     seriesFormatField.style.display = "block";
+    tableGroupField.style.display = "none";
 } else {
     label.textContent = "Tournament Name";
     input.placeholder = "Example: Mini World Cup 5";
     tournamentFields.style.display = "block";
     seriesFormatField.style.display = "none";
+    tableGroupField.style.display = "block";
 }
 
 }
