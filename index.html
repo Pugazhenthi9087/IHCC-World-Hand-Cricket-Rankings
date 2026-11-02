@@ -1378,19 +1378,15 @@ function renderTournamentList() {
 function showTournament(i) {
     const t = tournaments[i];
 
-    document.getElementById("tournamentList").style.display =
-        "none";
+    document.getElementById("tournamentList").style.display = "none";
+    document.getElementById("tournamentDetails").style.display = "block";
 
-    document.getElementById("tournamentDetails").style.display =
-        "block";
-
-    // Get newly entered matches for this tournament only
+    // Only include tournament matches belonging to this tournament.
     const addedMatches = newMatches.filter(m =>
         m.matchType === "tournament" &&
         m.tournament === t.name
     );
 
-    // Separate league/intermediate matches from knockouts
     const numberedStages = [
         "League Match",
         "Super 4",
@@ -1408,17 +1404,91 @@ function showTournament(i) {
         !numberedStages.includes(m.stageType)
     );
 
+    // Copy the original tables. Do not modify the saved baseline data.
+    const updatedTables = t.tables.map(tb => ({
+        title: tb.title,
+        rows: tb.rows.map(r => [...r])
+    }));
+
+    // Apply newly saved matches to their selected points table.
+    addedNumberedMatches.forEach(m => {
+        const table = updatedTables.find(tb =>
+            tb.title === m.tableGroup
+        );
+
+        // Do not update a table if the selected group is not found.
+        if (!table) return;
+
+        const team1Row = table.rows.find(r => r[0] === m.team1);
+        const team2Row = table.rows.find(r => r[0] === m.team2);
+
+        // Both teams must belong to the selected table.
+        if (!team1Row || !team2Row) {
+            console.warn("Match teams do not belong to selected table:", m);
+            return;
+        }
+
+        // Played
+        team1Row[1]++;
+        team2Row[1]++;
+
+        // Result
+        if (m.result === "nr") {
+            team1Row[4]++;
+            team2Row[4]++;
+        } else if (m.result === "team1") {
+            team1Row[2]++;
+            team2Row[3]++;
+        } else if (m.result === "team2") {
+            team2Row[2]++;
+            team1Row[3]++;
+        }
+
+        // Points entered for this match
+        team1Row[5] += Number(m.points1) || 0;
+        team2Row[5] += Number(m.points2) || 0;
+
+        // Use the latest supplied NRR value.
+        if (m.team1NRR !== null && m.team1NRR !== undefined &&
+            m.team1NRR !== "") {
+            team1Row[6] = Number(m.team1NRR).toFixed(2);
+        }
+
+        if (m.team2NRR !== null && m.team2NRR !== undefined &&
+            m.team2NRR !== "") {
+            team2Row[6] = Number(m.team2NRR).toFixed(2);
+        }
+    });
+
+    // Sort each table by points, then NRR where numeric.
+    updatedTables.forEach(tb => {
+        tb.rows.sort((a, b) => {
+            const pointsDifference = Number(b[5]) - Number(a[5]);
+
+            if (pointsDifference !== 0) {
+                return pointsDifference;
+            }
+
+            const nrrA = parseFloat(a[6]);
+            const nrrB = parseFloat(b[6]);
+
+            if (Number.isFinite(nrrA) && Number.isFinite(nrrB)) {
+                return nrrB - nrrA;
+            }
+
+            return 0;
+        });
+    });
+
     let h = `
         <h2>🏆 ${esc(t.name)}</h2>
 
         <div class="championBox">
             <div>🏆 Champion</div>
-
             <div class="big">
                 ${getFlag(t.champion)}
                 ${esc(t.champion)}
             </div>
-
             <div>
                 Runner-up:
                 ${getFlag(t.runnerUp)}
@@ -1427,11 +1497,10 @@ function showTournament(i) {
         </div>
     `;
 
-    // Existing points tables
-    t.tables.forEach(tb => {
+    // Updated points tables
+    updatedTables.forEach(tb => {
         h += `
             <h3>📊 ${esc(tb.title)}</h3>
-
             <div class="tableWrap">
                 <table>
                     <thead>
@@ -1459,7 +1528,7 @@ function showTournament(i) {
                     <td>${r[3]}</td>
                     <td>${r[4]}</td>
                     <td>${r[5]}</td>
-                    <td>${r[6]}</td>
+                    <td>${esc(String(r[6]))}</td>
                 </tr>
             `;
         });
@@ -1471,7 +1540,7 @@ function showTournament(i) {
         `;
     });
 
-    // Existing and newly entered numbered matches
+    // Existing and newly entered league/intermediate-stage results
     h += `<h3>🏏 Match Results</h3>`;
 
     const allNumberedMatches = [
@@ -1486,9 +1555,7 @@ function showTournament(i) {
 
         h += `
             <div class="match">
-                <strong>Match ${j + 1}</strong>
-                <br>
-
+                <strong>Match ${j + 1}</strong><br>
                 ${getFlag(team1)} ${esc(team1)}
                 <b>vs</b>
                 ${getFlag(team2)} ${esc(team2)}
@@ -1498,9 +1565,7 @@ function showTournament(i) {
         if (result === "nr") {
             h += `<span class="nr">⚪ No Result</span>`;
         } else {
-            const winner = Array.isArray(m)
-                ? result
-                : m.winner;
+            const winner = Array.isArray(m) ? result : m.winner;
 
             h += `
                 <span class="win">
@@ -1513,13 +1578,11 @@ function showTournament(i) {
         h += `</div>`;
     });
 
-    // Existing and newly entered knockout matches
+    // Existing and newly entered knockout results
     h += `<h3>🏆 Knockouts</h3>`;
 
     h += t.knockouts.map(x => `
-        <div class="match">
-            🏆 ${esc(x)}
-        </div>
+        <div class="match">🏆 ${esc(x)}</div>
     `).join("");
 
     addedKnockoutMatches.forEach(m => {
