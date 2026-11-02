@@ -1705,7 +1705,9 @@ async function submitMatch() {
             : "No Result";
 
     const matchRecord = {
-        match_type: matchType,
+        match_type: matchType === "tournament"
+    ? "world_cup"
+    : document.getElementById("seriesFormat").value,
         event_name: tournament,
         team1: team1,
         team2: team2,
