@@ -2197,6 +2197,7 @@ async function initializeIHCC() {
     updateTableGroupOptions();
 
     await loadMatchesFromSupabase();
+    await loadTournamentsFromSupabase();
 
     renderAll();
 }
