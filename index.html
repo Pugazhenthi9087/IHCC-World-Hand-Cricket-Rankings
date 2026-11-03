@@ -1154,6 +1154,44 @@ async function loadMatchesFromSupabase() {
         return false;
     }
 
+// ================= SUPABASE TOURNAMENT SYNC =================
+
+async function loadTournamentsFromSupabase() {
+    const db = window.IHCC_SUPABASE;
+
+    const { data, error } = await db
+        .from("ihcc_tournaments")
+        .select("*")
+        .order("created_at", { ascending: true });
+
+    if (error) {
+        console.error("Tournament loading error:", error);
+        alert("Could not load tournaments: " + error.message);
+        return false;
+    }
+
+    (data || []).forEach(row => {
+        const alreadyExists = tournaments.some(t =>
+            t.name.trim().toLowerCase() ===
+            row.name.trim().toLowerCase()
+        );
+
+        if (!alreadyExists) {
+            tournaments.push({
+                name: row.name,
+                type: row.tournament_type || "World Cup",
+                champion: row.champion || "",
+                runnerUp: row.runner_up || "",
+                tables: [],
+                matches: [],
+                knockouts: []
+            });
+        }
+    });
+
+    return true;
+}
+    
     newMatches = (data || []).map(row => ({
         id: row.id,
         matchType: row.match_type === "world_cup"
