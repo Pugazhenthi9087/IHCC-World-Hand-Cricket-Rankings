@@ -1844,6 +1844,26 @@ async function submitMatch() {
         return;
     }
 
+    // Create a tournament card only for World Cup matches
+    if (matchType === "tournament") {
+        const { error: tournamentError } = await db
+            .from("ihcc_tournaments")
+            .insert({
+                name: tournament,
+                tournament_type: "World Cup",
+                created_by: userData.user.id
+            });
+
+        // A duplicate name is normal when adding later matches
+        if (tournamentError && tournamentError.code !== "23505") {
+            console.error("Tournament creation error:", tournamentError);
+            alert(
+                "The match was saved, but the tournament card could not be created. " +
+                tournamentError.message
+            );
+        }
+    }
+ 
     const savedMatch = {
         id: savedRecord.id,
         matchType,
