@@ -1963,6 +1963,10 @@ async function submitMatch() {
 
     newMatches.push(savedMatch);
 
+    if (matchType === "tournament" && stageType === "Final") {
+        await syncTournamentChampion(tournament);
+    }
+
     save();
 
     document.getElementById("calculation").innerHTML = `
