@@ -2143,6 +2143,10 @@ async function deleteMatch(index) {
 
     newMatches.splice(index, 1);
 
+    if (match.matchType === "tournament" && match.stageType === "Final") {
+        await syncTournamentChampion(match.tournament);
+    }
+
     rebuildRankingsFromMatches();
     save();
     renderAll();
