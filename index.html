@@ -1225,7 +1225,73 @@ async function loadTournamentsFromSupabase() {
 
     return true;
 }
-    
+
+// ================= UPDATE TOURNAMENT CHAMPION =================
+
+async function syncTournamentChampion(tournamentName) {
+    const db = window.IHCC_SUPABASE;
+
+    // Find the latest remaining Final for this tournament
+    const { data: finals, error } = await db
+        .from("ihcc_matches")
+        .select("team1, team2, result, created_at")
+        .eq("match_type", "world_cup")
+        .eq("event_name", tournamentName)
+        .eq("stage", "Final")
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        console.error("Could not check tournament final:", error);
+        alert("Could not update champion: " + error.message);
+        return false;
+    }
+
+    let champion = null;
+    let runnerUp = null;
+
+    // A No Result final does not decide a champion
+    const decidedFinal = (finals || []).find(m =>
+        m.result === "team1" || m.result === "team2"
+    );
+
+    if (decidedFinal) {
+        champion = decidedFinal.result === "team1"
+            ? decidedFinal.team1
+            : decidedFinal.team2;
+
+        runnerUp = decidedFinal.result === "team1"
+            ? decidedFinal.team2
+            : decidedFinal.team1;
+    }
+
+    const { error: updateError } = await db
+        .from("ihcc_tournaments")
+        .update({
+            champion: champion,
+            runner_up: runnerUp
+        })
+        .eq("name", tournamentName);
+
+    if (updateError) {
+        console.error("Champion update error:", updateError);
+        alert("Could not save champion and runner-up: " + updateError.message);
+        return false;
+    }
+
+    // Update the displayed tournament data
+    const tournament = tournaments.find(t =>
+        t.name.trim().toLowerCase() ===
+        tournamentName.trim().toLowerCase()
+    );
+
+    if (tournament) {
+        tournament.champion = champion || "";
+        tournament.runnerUp = runnerUp || "";
+    }
+
+    return true;
+}
+
 function rebuildRankingsFromMatches() {
     rankings = {};
 
