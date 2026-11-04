@@ -1463,14 +1463,14 @@ function renderTournamentList() {
 
                 <p>
                     <b>Champion:</b>
-                    ${getFlag(t.champion)}
-                    ${esc(t.champion)}
+                    ${t.champion ? getFlag(t.champion) : "🌍"}
+                    ${esc(t.champion || "To be decided")}
                 </p>
 
                 <p>
                     <b>Runner-up:</b>
-                    ${getFlag(t.runnerUp)}
-                    ${esc(t.runnerUp)}
+                    ${t.runnerUp ? getFlag(t.runnerUp) : ""}
+                    ${esc(t.runnerUp || "To be decided")}
                 </p>
             </div>
         `).join("");
