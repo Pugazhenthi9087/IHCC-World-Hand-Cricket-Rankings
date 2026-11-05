@@ -1639,11 +1639,40 @@ function showTournament(i) {
         !numberedStages.includes(m.stageType)
     );
 
-    // Copy the original tables. Do not modify the saved baseline data.
-    const updatedTables = t.tables.map(tb => ({
-        title: tb.title,
-        rows: tb.rows.map(r => [...r])
-    }));
+// Copy original tables and create missing tables for new groups.
+const updatedTables = (t.tables || []).map(tb => ({
+    title: tb.title,
+    rows: tb.rows.map(r => [...r])
+}));
+
+// Create a table and team rows when a new tournament has no
+// existing points table for the selected group.
+addedNumberedMatches.forEach(m => {
+    if (!m.tableGroup) {
+        console.warn("Match has no selected points table:", m);
+        return;
+    }
+
+    let table = updatedTables.find(tb =>
+        tb.title === m.tableGroup
+    );
+
+    if (!table) {
+        table = {
+            title: m.tableGroup,
+            rows: []
+        };
+        updatedTables.push(table);
+    }
+
+    [m.team1, m.team2].forEach(team => {
+        if (!table.rows.some(r => r[0] === team)) {
+            table.rows.push([
+                team, 0, 0, 0, 0, 0, "0.00"
+            ]);
+        }
+    });
+});
 
     // Apply newly saved matches to their selected points table.
     addedNumberedMatches.forEach(m => {
