@@ -1478,6 +1478,138 @@ function renderTournamentList() {
 
 // ================= TOURNAMENT DETAILS =================
 
+// ================= AUTOMATIC POINTS TABLES =================
+
+function buildTournamentTables(t, addedMatches) {
+    const tables = (t.tables || []).map(tb => ({
+        title: tb.title,
+        rows: tb.rows.map(r => [...r])
+    }));
+
+    const numberedStages = [
+        "League Match",
+        "Super 4",
+        "Super 6",
+        "Super 8",
+        "Super 10",
+        "Super 12"
+    ];
+
+    const grouped = {};
+
+    addedMatches
+        .filter(m => numberedStages.includes(m.stageType))
+        .forEach(m => {
+            const group = m.tableGroup;
+
+            if (!group) return;
+
+            if (!grouped[group]) {
+                grouped[group] = {};
+            }
+
+            const groupData = grouped[group];
+
+            [m.team1, m.team2].forEach(team => {
+                if (!groupData[team]) {
+                    groupData[team] = {
+                        team,
+                        played: 0,
+                        wins: 0,
+                        losses: 0,
+                        noResults: 0,
+                        points: 0,
+                        nrr: null
+                    };
+                }
+            });
+
+            const a = groupData[m.team1];
+            const b = groupData[m.team2];
+
+            a.played++;
+            b.played++;
+
+            if (m.result === "nr") {
+                a.noResults++;
+                b.noResults++;
+                a.points++;
+                b.points++;
+            } else if (m.result === "team1") {
+                a.wins++;
+                b.losses++;
+                a.points += 2;
+            } else if (m.result === "team2") {
+                b.wins++;
+                a.losses++;
+                b.points += 2;
+            }
+
+            if (m.team1NRR !== null && m.team1NRR !== undefined) {
+                a.nrr = Number(m.team1NRR);
+            }
+
+            if (m.team2NRR !== null && m.team2NRR !== undefined) {
+                b.nrr = Number(m.team2NRR);
+            }
+        });
+
+    Object.keys(grouped).forEach(group => {
+        let table = tables.find(tb =>
+            tb.title.trim().toLowerCase() === group.trim().toLowerCase()
+        );
+
+        if (!table) {
+            table = {
+                title: group,
+                rows: []
+            };
+            tables.push(table);
+        }
+
+        const rowsByTeam = {};
+
+        table.rows.forEach(row => {
+            rowsByTeam[row[0]] = [...row];
+        });
+
+        Object.values(grouped[group]).forEach(stat => {
+            const old = rowsByTeam[stat.team] || [
+                stat.team, 0, 0, 0, 0, 0, "0.00"
+            ];
+
+            const oldNRR = Number(old[6]) || 0;
+            const latestNRR = stat.nrr === null
+                ? oldNRR
+                : stat.nrr;
+
+            rowsByTeam[stat.team] = [
+                stat.team,
+                Number(old[1]) + stat.played,
+                Number(old[2]) + stat.wins,
+                Number(old[3]) + stat.losses,
+                Number(old[4]) + stat.noResults,
+                Number(old[5]) + stat.points,
+                latestNRR >= 0
+                    ? "+" + latestNRR.toFixed(2)
+                    : latestNRR.toFixed(2)
+            ];
+        });
+
+        table.rows = Object.values(rowsByTeam).sort((a, b) => {
+            const pointsDifference = Number(b[5]) - Number(a[5]);
+
+            if (pointsDifference !== 0) {
+                return pointsDifference;
+            }
+
+            return (Number(b[6]) || 0) - (Number(a[6]) || 0);
+        });
+    });
+
+    return tables;
+}
+
 function showTournament(i) {
     const t = tournaments[i];
 
