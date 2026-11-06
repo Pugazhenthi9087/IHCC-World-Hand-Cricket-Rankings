@@ -2314,6 +2314,58 @@ async function deleteMatch(index) {
         await syncTournamentChampion(match.tournament);
     }
 
+    // Automatically delete an empty, newly created tournament
+    if (match.matchType === "tournament" && match.tournament) {
+
+    const originalTournaments = [
+        "Mini World Cup 1",
+        "Mini World Cup 2",
+        "Mini World Cup 3",
+        "Mini World Cup 4",
+        "Major World Cup 1 (15 Teams)",
+        "Major World Cup 2 (20 Teams)"
+    ];
+
+    const isOriginalTournament = originalTournaments.some(name =>
+        name.toLowerCase() === match.tournament.trim().toLowerCase()
+    );
+
+     if (!isOriginalTournament) {
+        const { count, error: countError } = await db
+            .from("ihcc_matches")
+            .select("id", { count: "exact", head: true })
+            .eq("match_type", "world_cup")
+            .eq("event_name", match.tournament);
+
+        if (countError) {
+            console.error("Tournament match count error:", countError);
+            alert("Match deleted, but tournament cleanup failed: " +
+                countError.message);
+        } else if (count === 0) {
+            const { error: tournamentDeleteError } = await db
+                .from("ihcc_tournaments")
+                .delete()
+                .eq("name", match.tournament);
+
+            if (tournamentDeleteError) {
+                console.error("Tournament deletion error:",
+                    tournamentDeleteError);
+                alert("The tournament card could not be deleted: " +
+                    tournamentDeleteError.message);
+            } else {
+                const tournamentIndex = tournaments.findIndex(t =>
+                    t.name.trim().toLowerCase() ===
+                    match.tournament.trim().toLowerCase()
+                );
+
+                if (tournamentIndex !== -1) {
+                    tournaments.splice(tournamentIndex, 1);
+                }
+            }
+        }
+    }
+}
+
     rebuildRankingsFromMatches();
     save();
     renderAll();
