@@ -1708,9 +1708,15 @@ function showTournament(i) {
             team1Row[3]++;
         }
 
-        // Points entered for this match
-        team1Row[5] += Number(m.points1) || 0;
-        team2Row[5] += Number(m.points2) || 0;
+        // Tournament points — separate from World Rankings points
+        if (m.result === "nr") {
+            team1Row[5] += 1;
+            team2Row[5] += 1;
+        } else if (m.result === "team1") {
+            team1Row[5] += 2;
+        } else if (m.result === "team2") {
+            team2Row[5] += 2;
+        }
 
         // Use the latest supplied NRR value.
         if (m.team1NRR !== null && m.team1NRR !== undefined &&
