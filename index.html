@@ -1193,6 +1193,15 @@ matchCategory: row.match_type,
 async function loadTournamentsFromSupabase() {
     const db = window.IHCC_SUPABASE;
 
+    const originalTournaments = [
+        "Mini World Cup 1",
+        "Mini World Cup 2",
+        "Mini World Cup 3",
+        "Mini World Cup 4",
+        "Major World Cup 1 (15 Teams)",
+        "Major World Cup 2 (20 Teams)"
+    ];
+
     const { data, error } = await db
         .from("ihcc_tournaments")
         .select("*")
@@ -1204,7 +1213,45 @@ async function loadTournamentsFromSupabase() {
         return false;
     }
 
-    (data || []).forEach(row => {
+    for (const row of (data || [])) {
+
+        const isOriginal = originalTournaments.some(name =>
+            name.toLowerCase() === row.name.trim().toLowerCase()
+        );
+
+        // Check whether this tournament has any saved World Cup matches.
+        const { count, error: countError } = await db
+            .from("ihcc_matches")
+            .select("id", { count: "exact", head: true })
+            .eq("match_type", "world_cup")
+            .eq("event_name", row.name);
+
+        if (countError) {
+            console.error("Tournament match check failed:", countError);
+            continue;
+        }
+
+        // Remove an empty temporary tournament.
+        if (!isOriginal && count === 0) {
+
+            // Only authenticated IHCC admins can delete database records.
+            if (window.__ihccAdmin) {
+                const { error: deleteError } = await db
+                    .from("ihcc_tournaments")
+                    .delete()
+                    .eq("id", row.id);
+
+                if (deleteError) {
+                    console.error("Empty tournament deletion failed:", deleteError);
+                    alert("Could not delete empty tournament: " +
+                        deleteError.message);
+                }
+            }
+
+            // Do not display an empty temporary tournament.
+            continue;
+        }
+
         const alreadyExists = tournaments.some(t =>
             t.name.trim().toLowerCase() ===
             row.name.trim().toLowerCase()
@@ -1221,7 +1268,7 @@ async function loadTournamentsFromSupabase() {
                 knockouts: []
             });
         }
-    });
+    }
 
     return true;
 }
