@@ -2178,9 +2178,67 @@ async function submitMatch() {
     newMatches.push(savedMatch);
 
     if (matchType === "tournament" && stageType === "Final") {
-        await syncTournamentChampion(tournament);
-    }
+    await syncTournamentChampion(tournament);
 
+    // Lock the unique team count when the final is recorded.
+    const { data: tournamentRow, error: tournamentReadError } = await db
+        .from("ihcc_tournaments")
+        .select("tournament_type")
+        .eq("name", tournament)
+        .maybeSingle();
+
+    if (tournamentReadError) {
+        console.error("Could not read tournament format:", tournamentReadError);
+    } else if (
+        tournamentRow &&
+        tournamentRow.tournament_type === "World Cup"
+    ) {
+        const { data: tournamentMatches, error: matchesError } = await db
+            .from("ihcc_matches")
+            .select("team1, team2")
+            .eq("match_type", "world_cup")
+            .eq("event_name", tournament);
+
+        if (matchesError) {
+            console.error("Could not count tournament teams:", matchesError);
+        } else {
+            const uniqueTeams = new Set();
+
+            (tournamentMatches || []).forEach(match => {
+                if (match.team1) uniqueTeams.add(match.team1.trim());
+                if (match.team2) uniqueTeams.add(match.team2.trim());
+            });
+
+            const teamCount = uniqueTeams.size;
+
+            if (teamCount > 0) {
+                const lockedFormat = `${teamCount}-Team World Cup`;
+
+                const { error: lockError } = await db
+                    .from("ihcc_tournaments")
+                    .update({ tournament_type: lockedFormat })
+                    .eq("name", tournament)
+                    .eq("tournament_type", "World Cup");
+
+                if (lockError) {
+                    console.error("Could not lock tournament format:", lockError);
+                    alert(
+                        "The final was saved, but the team count could not be locked:\n" +
+                        lockError.message
+                    );
+                } else {
+                    const localTournament = tournaments.find(
+                        t => t.name.trim().toLowerCase() === tournament.toLowerCase()
+                    );
+
+                    if (localTournament) {
+                        localTournament.type = lockedFormat;
+                    }
+                }
+            }
+        }
+    }
+}
     save();
 
     document.getElementById("calculation").innerHTML = `
