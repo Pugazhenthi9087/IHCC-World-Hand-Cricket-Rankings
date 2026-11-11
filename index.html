@@ -2515,20 +2515,53 @@ function openPage(id, button) {
 
 // ================= RESET DATA =================
 
-function resetData() {
+
+async function resetData() {
     if (!window.__ihccAdmin) {
         openAdminModal();
         return;
     }
 
     if (!confirm(
-        "Reset all new matches and restore the official baseline?"
+        "RESET ALL NEW MATCHES?\n\n" +
+        "This will delete all newly entered tournament and series matches " +
+        "from the database and restore the official baseline.\n\n" +
+        "Your six historical tournament records and tournament cards will remain.\n\n" +
+        "This action cannot be undone. Continue?"
     )) {
+        return;
+    }
+
+    const db = window.IHCC_SUPABASE;
+
+    if (!db) {
+        alert("Database connection is unavailable. Nothing was reset.");
+        return;
+    }
+
+    const { data, error } = await db
+        .from("ihcc_matches")
+        .delete()
+        .not("id", "is", null)
+        .select("id");
+
+    if (error) {
+        alert(
+            "Reset failed. No local data was cleared.\n\n" +
+            error.message
+        );
         return;
     }
 
     localStorage.removeItem("ihccRankings");
     localStorage.removeItem("ihccMatches");
+    localStorage.removeItem("ihccMatchesPlayed");
+
+    alert(
+        "Reset successful!\n\n" +
+        (data ? data.length : 0) +
+        " database match records deleted. The official baseline will be restored."
+    );
 
     location.reload();
 }
