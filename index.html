@@ -1395,54 +1395,87 @@ async function syncTournamentChampion(tournamentName) {
 function rebuildRankingsFromMatches() {
     rankings = {};
 
-    officialTeams.forEach(t => {
-        rankings[t.name] = {
-            name: t.name,
-            flag: t.flag,
-            rating: t.rating,
-            points: t.points,
+    officialTeams.forEach(team => {
+        rankings[team.name] = {
+            name: team.name,
+            flag: team.flag,
+            rating: team.rating,
+            points: team.points,
             wins: 0,
             losses: 0,
             noResults: 0
         };
     });
 
-    Object.keys(matchesPlayed).forEach(team => {
-        delete matchesPlayed[team];
-    });
+    const ratingTotals = { ...baselineRatingTotals };
+    const matchCounts = { ...baselineMatchesPlayed };
 
-    Object.assign(matchesPlayed, baselineMatchesPlayed);
-
-    newMatches.forEach(m => {
-        if (!rankings[m.team1] || !rankings[m.team2]) {
-            console.error("Unknown team in saved match:", m);
+    // Recalculate every saved match in chronological order.
+    newMatches.forEach(match => {
+        if (!rankings[match.team1] || !rankings[match.team2]) {
+            console.error("Unknown team in saved match:", match);
             return;
         }
 
-        const data = calculateMatch(
-            m.team1,
-            m.team2,
-            m.result
+        // Elo calculation remains unchanged.
+        const eloData = calculateMatch(
+            match.team1,
+            match.team2,
+            match.result
         );
 
-        rankings[m.team1].points += Number(m.points1) || 0;
-        rankings[m.team2].points += Number(m.points2) || 0;
+        match.oldA = eloData.oldA;
+        match.oldB = eloData.oldB;
+        match.newA = eloData.newA;
+        match.newB = eloData.newB;
+        match.changeA = eloData.changeA;
+        match.changeB = eloData.changeB;
 
-        matchesPlayed[m.team1] =
-            (matchesPlayed[m.team1] || 0) + 1;
+        const count1 = matchCounts[match.team1] || 0;
+        const count2 = matchCounts[match.team2] || 0;
 
-        matchesPlayed[m.team2] =
-            (matchesPlayed[m.team2] || 0) + 1;
+        const rating1 = count1
+            ? ratingTotals[match.team1] / count1
+            : 1000;
 
-        m.oldA = data.oldA;
-        m.oldB = data.oldB;
-        m.newA = data.newA;
-        m.newB = data.newB;
-        m.changeA = data.changeA;
-        m.changeB = data.changeB;
+        const rating2 = count2
+            ? ratingTotals[match.team2] / count2
+            : 1000;
+
+        const earned = getICCMatchPoints(
+            rating1,
+            rating2,
+            match.result
+        );
+
+        if (earned === null) {
+            match.points1 = 0;
+            match.points2 = 0;
+            return;
+        }
+
+        match.points1 = earned[0];
+        match.points2 = earned[1];
+
+        ratingTotals[match.team1] += earned[0];
+        ratingTotals[match.team2] += earned[1];
+
+        matchCounts[match.team1]++;
+        matchCounts[match.team2]++;
+    });
+
+    // Update displayed ratings and match counts.
+    Object.keys(rankings).forEach(team => {
+        const count = matchCounts[team] || 0;
+
+        rankings[team].points = count
+            ? Math.round(ratingTotals[team] / count)
+            : 0;
+
+        matchesPlayed[team] = count;
     });
 }
-
+    
 function round(n) {
     return Math.round(n * 100) / 100;
 }
