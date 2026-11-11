@@ -519,6 +519,59 @@ const officialTeams = [
     {name:"West Indies", flag:"🌴", rating:921.52, points:186}
 ];
 
+// Starting ICC-style rating points.
+// Existing displayed ratings × existing historical matches.
+const baselineRatingTotals = {};
+
+officialTeams.forEach(team => {
+    baselineRatingTotals[team.name] =
+        Number(team.points) *
+        Number(baselineMatchesPlayed[team.name] || 0);
+});
+
+function getICCMatchPoints(rating1, rating2, result) {
+    const gap = Math.abs(rating1 - rating2);
+
+    // No Result: excluded from ICC rating calculations.
+    if (["noresult", "no_result", "nr", "No Result"].includes(result)) {
+        return null;
+    }
+
+    // Ratings less than 40 points apart.
+    if (gap < 40) {
+        if (result === "team1") {
+            return [rating2 + 50, rating1 - 50];
+        }
+
+        if (result === "team2") {
+            return [rating2 - 50, rating1 + 50];
+        }
+
+        // Tie or draw.
+        return [rating2, rating1];
+    }
+
+    // Ratings 40 or more points apart.
+    const team1Stronger = rating1 > rating2;
+
+    if (result === "team1") {
+        return team1Stronger
+            ? [rating1 + 10, rating2 - 10]
+            : [rating1 + 90, rating2 - 90];
+    }
+
+    if (result === "team2") {
+        return team1Stronger
+            ? [rating1 - 90, rating2 + 90]
+            : [rating1 - 10, rating2 + 10];
+    }
+
+    // Tie or draw.
+    return team1Stronger
+        ? [rating1 - 40, rating2 + 40]
+        : [rating1 + 40, rating2 - 40];
+}
+
 // IHCC Full Members.
 const fullMembers = [
     "Pugazhenthi",
