@@ -2128,9 +2128,6 @@ async function submitMatch() {
     const team2 = document.getElementById("team2").value;
     const result = document.getElementById("matchResult").value;
 
-    const points1 = Number(document.getElementById("points1").value) || 0;
-    const points2 = Number(document.getElementById("points2").value) || 0;
-
     if (!tournament) {
         alert(matchType === "series"
             ? "Enter the series name."
