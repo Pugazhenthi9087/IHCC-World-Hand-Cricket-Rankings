@@ -1464,9 +1464,8 @@ function rebuildRankingsFromMatches() {
         const count = matchCounts[team] || 0;
 
         rankings[team].points = count
-            ? Math.round(ratingTotals[team] / count)
+            ? Number((ratingTotals[team] / count).toFixed(2))
             : 0;
-
         matchesPlayed[team] = count;
     });
 }
