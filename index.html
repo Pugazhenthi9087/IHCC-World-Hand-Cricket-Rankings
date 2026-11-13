@@ -2167,11 +2167,7 @@ async function submitMatch() {
 
     const data = calculateMatch(team1, team2, result);
 
-    const winner = result === "team1"
-        ? team1
-        : result === "team2"
-            ? team2
-            : "no_result";
+    const winner = result;
 
     const matchRecord = {
         match_type: matchType === "tournament"
