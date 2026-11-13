@@ -1429,8 +1429,8 @@ function rebuildRankingsFromMatches() {
         match.changeA = eloData.changeA;
         match.changeB = eloData.changeB;
 
-        const count1 = matchCounts[match.team1] || 0;
-        const count2 = matchCounts[match.team2] || 0;
+        const count1 = pointsMatchCounts[match.team1] || 0;
+        const count2 = pointsMatchCounts[match.team2] || 0;
 
         const rating1 = count1
             ? ratingTotals[match.team1] / count1
