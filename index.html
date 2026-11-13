@@ -1449,6 +1449,10 @@ function rebuildRankingsFromMatches() {
         if (earned === null) {
             match.points1 = 0;
             match.points2 = 0;
+
+            matchCounts[match.team1]++;
+            matchCounts[match.team2]++;
+
             return;
         }
 
