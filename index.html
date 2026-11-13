@@ -1468,12 +1468,13 @@ function rebuildRankingsFromMatches() {
 
     // Update displayed ratings and match counts.
     Object.keys(rankings).forEach(team => {
-        const count = matchCounts[team] || 0;
+        const count = pointsMatchCounts[team] || 0;
 
         rankings[team].points = count
             ? Number((ratingTotals[team] / count).toFixed(2))
             : 0;
-        matchesPlayed[team] = count;
+
+        matchesPlayed[team] = matchCounts[team] || 0;
     });
 }
     
