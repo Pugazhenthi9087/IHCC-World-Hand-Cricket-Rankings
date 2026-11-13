@@ -2601,11 +2601,7 @@ async function resetData() {
     }
 
     if (!confirm(
-        "RESET ALL NEW MATCHES?\n\n" +
-        "This will delete all newly entered tournament and series matches " +
-        "from the database and restore the official baseline.\n\n" +
-        "Your six historical tournament records and tournament cards will remain.\n\n" +
-        "This action cannot be undone. Continue?"
+        "This will permanently delete ALL match records (tournament and series) from the database and reset the rankings. This cannot be undone. Continue?"
     )) {
         return;
     }
