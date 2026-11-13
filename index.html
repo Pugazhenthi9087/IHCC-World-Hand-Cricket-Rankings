@@ -1404,9 +1404,9 @@ function rebuildRankingsFromMatches() {
         };
     });
 
-       const ratingTotals = { ...baselineRatingTotals };
-       const matchCounts = { ...baselineMatchesPlayed };
-       const pointsMatchCounts = { ...baselineMatchesPlayed };
+    const ratingTotals = { ...baselineRatingTotals };
+    const matchCounts = { ...baselineMatchesPlayed };
+    const pointsMatchCounts = { ...baselineMatchesPlayed };
 
     // Recalculate every saved match in chronological order.
     newMatches.forEach(match => {
