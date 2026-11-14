@@ -1978,6 +1978,7 @@ function showTournament(i) {
                 : result === "team2"
                     ? team2
                     : (Array.isArray(m) ? result : m.winner);
+           
             h += `
                 <span class="win">
                     🏆 ${getFlag(winner)}
@@ -1999,8 +2000,8 @@ function showTournament(i) {
     addedKnockoutMatches.forEach(m => {
         const outcome = m.result === "nr"
             ? "No Result"
-            : `${m.winner} won`;
-
+            : `${m.result === "team1" ? m.team1 : m.team2} won`;
+       
         h += `
             <div class="match">
                 🏆 ${esc(m.stageType)}:
