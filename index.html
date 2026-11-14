@@ -2383,13 +2383,13 @@ function renderHistory() {
 
                     <br><br>
 
-                    ${
-                        m.result === "nr"
-                            ? "⚪ No Result"
-                            : `🏆 ${getFlag(m.winner)}
-                               ${esc(m.winner)} won`
-                    }
-
+                    ${(
+                       m.result === "nr"
+                           ? "🌫️ No Result"
+                           : `🏆 ${getFlag(m.result === "team1" ? m.team1 : m.team2)}
+                               ${esc(m.result === "team1" ? m.team1 : m.team2)} won`
+                    )}
+                    
                     <br><br>
 
                     ${esc(m.team1)}:
