@@ -1973,8 +1973,11 @@ function showTournament(i) {
         if (result === "nr") {
             h += `<span class="nr">⚪ No Result</span>`;
         } else {
-            const winner = Array.isArray(m) ? result : m.winner;
-
+            const winner = result === "team1"
+                ? team1
+                : result === "team2"
+                    ? team2
+                    : (Array.isArray(m) ? result : m.winner);
             h += `
                 <span class="win">
                     🏆 ${getFlag(winner)}
