@@ -2336,7 +2336,7 @@ async function submitMatch() {
             <br><br>
             ${result === "nr"
                 ? "⚪ No Result — no Elo change."
-                : `🏆 ${esc(winner)} won.`}
+                : `🏆 ${esc(result === "team1" ? team1 : team2)} won.`}
         </div>
     `;
 
