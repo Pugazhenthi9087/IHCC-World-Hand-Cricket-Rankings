@@ -2263,6 +2263,9 @@ async function submitMatch() {
     const savedMatch = {
         id: savedRecord.id,
         matchType,
+        matchCategory: matchType === "series"
+            ? document.getElementById("seriesFormat").value
+            : "world_cup",
         tournament,
         stageType,
         tableGroup,
