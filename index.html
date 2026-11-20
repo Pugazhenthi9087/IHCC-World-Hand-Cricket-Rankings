@@ -2738,6 +2738,263 @@ if (matchType === "series") {
 
 }
 
+
+// ================= SERIES ARCHIVE =================
+
+function getSeriesFormatLabel(format) {
+    if (format === "tri_nation") return "Tri-National Series";
+    if (format === "quadrangular") return "Quadrangular Series";
+    return "Bilateral Series";
+}
+
+function getSeriesList() {
+    const seriesMap = new Map();
+
+    newMatches
+        .filter(m => m.matchType === "series")
+        .forEach(m => {
+            const key = m.tournament.trim().toLowerCase();
+
+            if (!seriesMap.has(key)) {
+                seriesMap.set(key, {
+                    name: m.tournament,
+                    format: m.matchCategory || "bilateral",
+                    matches: []
+                });
+            }
+
+            seriesMap.get(key).matches.push(m);
+        });
+
+    return Array.from(seriesMap.values());
+}
+
+function renderSeriesList() {
+    const grid = document.getElementById("seriesGrid");
+    if (!grid) return;
+
+    const series = getSeriesList();
+
+    if (!series.length) {
+        grid.innerHTML = `
+            <p class="small">No series have been entered yet.</p>
+        `;
+        return;
+    }
+
+    grid.innerHTML = series.map((s, i) => {
+        const finalMatch = s.matches.find(
+            m => m.stageType === "Final" &&
+                (m.result === "team1" || m.result === "team2")
+        );
+
+        const champion = finalMatch
+            ? (finalMatch.result === "team1"
+                ? finalMatch.team1
+                : finalMatch.team2)
+            : "";
+
+        return `
+            <div class="tournamentCard"
+                 onclick="showSeries(${i})">
+
+                <h3>🏏 ${esc(s.name)}</h3>
+
+                <p>${getSeriesFormatLabel(s.format)}</p>
+
+                <p>
+                    <b>Matches:</b> ${s.matches.length}
+                </p>
+
+                ${
+                    s.format === "bilateral"
+                    ? ""
+                    : `
+                        <p>
+                            <b>Champion:</b>
+                            ${champion ? getFlag(champion) : "🌍"}
+                            ${esc(champion || "To be decided")}
+                        </p>
+                    `
+                }
+            </div>
+        `;
+    }).join("");
+}
+
+function showSeries(index) {
+    const series = getSeriesList()[index];
+    if (!series) return;
+
+    document.getElementById("seriesList").style.display = "none";
+    document.getElementById("seriesDetails").style.display = "block";
+
+    const format = series.format;
+    const matches = series.matches;
+
+    let html = `
+        <h2>🏏 ${esc(series.name)}</h2>
+        <p>${getSeriesFormatLabel(format)}</p>
+    `;
+
+    // Match results
+    html += `<h3>🏏 Match Results</h3>`;
+
+    const leagueMatches = matches.filter(
+        m => m.stageType !== "Final"
+    );
+
+    leagueMatches.forEach((m, i) => {
+        html += `
+            <div class="match">
+                <strong>Match ${i + 1}</strong><br>
+
+                ${getFlag(m.team1)} ${esc(m.team1)}
+                <b>vs</b>
+                ${getFlag(m.team2)} ${esc(m.team2)}
+                <br>
+                ${
+                    m.result === "nr"
+                    ? `<span class="nr">⚪ No Result</span>`
+                    : `<span class="win">
+                        🏆 ${getFlag(
+                            m.result === "team1" ? m.team1 : m.team2
+                        )}
+                        ${esc(m.result === "team1" ? m.team1 : m.team2)} won
+                       </span>`
+                }
+            </div>
+        `;
+    });
+
+    if (!leagueMatches.length) {
+        html += `<p class="small">No league match results yet.</p>`;
+    }
+
+    // Points table: Tri-National and Quadrangular only
+    if (format === "tri_nation" || format === "quadrangular") {
+        const stats = {};
+
+        leagueMatches.forEach(m => {
+            [m.team1, m.team2].forEach(team => {
+                if (!stats[team]) {
+                    stats[team] = {
+                        played: 0,
+                        won: 0,
+                        lost: 0,
+                        noResult: 0,
+                        points: 0
+                    };
+                }
+            });
+
+            const a = stats[m.team1];
+            const b = stats[m.team2];
+
+            a.played++;
+            b.played++;
+
+            if (m.result === "nr") {
+                a.noResult++;
+                b.noResult++;
+                a.points++;
+                b.points++;
+            } else if (m.result === "team1") {
+                a.won++;
+                b.lost++;
+                a.points += 2;
+            } else if (m.result === "team2") {
+                b.won++;
+                a.lost++;
+                b.points += 2;
+            }
+        });
+
+        const rows = Object.entries(stats).sort(
+            (a, b) => b[1].points - a[1].points ||
+                      b[1].won - a[1].won
+        );
+
+        html += `
+            <h3>📊 Series Points Table</h3>
+            <div class="tableWrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pos</th>
+                            <th>Team</th>
+                            <th>Played</th>
+                            <th>Won</th>
+                            <th>Lost</th>
+                            <th>No Result</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        rows.forEach(([team, s], i) => {
+            html += `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${getFlag(team)} ${esc(team)}</td>
+                    <td>${s.played}</td>
+                    <td>${s.won}</td>
+                    <td>${s.lost}</td>
+                    <td>${s.noResult}</td>
+                    <td>${s.points}</td>
+                </tr>
+            `;
+        });
+
+        html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    // Final only — no semifinals or other knockout stages
+    if (format === "tri_nation" || format === "quadrangular") {
+        const finals = matches.filter(m => m.stageType === "Final");
+
+        html += `<h3>🏆 Final</h3>`;
+
+        if (!finals.length) {
+            html += `<p class="small">Final not yet recorded.</p>`;
+        }
+
+        finals.forEach(m => {
+            html += `
+                <div class="match">
+                    ${getFlag(m.team1)} ${esc(m.team1)}
+                    <b>vs</b>
+                    ${getFlag(m.team2)} ${esc(m.team2)}
+                    <br>
+                    ${
+                        m.result === "nr"
+                        ? `<span class="nr">⚪ No Result</span>`
+                        : `<span class="win">
+                            🏆 ${
+                                m.result === "team1"
+                                ? esc(m.team1)
+                                : esc(m.team2)
+                            } won
+                           </span>`
+                    }
+                </div>
+            `;
+        });
+    }
+
+    document.getElementById("seriesOutput").innerHTML = html;
+}
+
+function showSeriesList() {
+    document.getElementById("seriesDetails").style.display = "none";
+    document.getElementById("seriesList").style.display = "block";
+}
+
 function renderAll() {
     renderRankings();
     renderTeams();
