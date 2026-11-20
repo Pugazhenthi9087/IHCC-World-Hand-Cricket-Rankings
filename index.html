@@ -2786,16 +2786,40 @@ function renderSeriesList() {
     }
 
     grid.innerHTML = series.map((s, i) => {
-        const finalMatch = s.matches.find(
-            m => m.stageType === "Final" &&
-                (m.result === "team1" || m.result === "team2")
-        );
+        let champion = "";
 
-        const champion = finalMatch
-            ? (finalMatch.result === "team1"
-                ? finalMatch.team1
-                : finalMatch.team2)
-            : "";
+if (s.format === "bilateral") {
+    const wins = {};
+
+    s.matches.forEach(m => {
+        if (m.result === "team1") {
+            wins[m.team1] = (wins[m.team1] || 0) + 1;
+        } else if (m.result === "team2") {
+            wins[m.team2] = (wins[m.team2] || 0) + 1;
+        }
+    });
+
+    const teams = Object.keys(wins);
+
+    if (teams.length === 2 && wins[teams[0]] !== wins[teams[1]]) {
+        champion = wins[teams[0]] > wins[teams[1]]
+            ? teams[0]
+            : teams[1];
+    } else if (teams.length === 1) {
+        champion = teams[0];
+    }
+} else {
+    const finalMatch = s.matches.find(
+        m => m.stageType === "Final" &&
+            (m.result === "team1" || m.result === "team2")
+    );
+
+    champion = finalMatch
+        ? (finalMatch.result === "team1"
+            ? finalMatch.team1
+            : finalMatch.team2)
+        : "";
+}
 
         return `
             <div class="tournamentCard"
