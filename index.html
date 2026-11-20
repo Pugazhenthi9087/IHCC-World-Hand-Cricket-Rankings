@@ -2142,7 +2142,7 @@ async function submitMatch() {
 
     const stageType = matchType === "tournament"
         ? document.getElementById("stageType").value
-        : "";
+        : document.getElementById("seriesStage").value;
 
     const tableGroup = matchType === "tournament"
         ? document.getElementById("tableGroup").value
