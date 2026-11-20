@@ -2839,10 +2839,12 @@ if (s.format === "bilateral") {
                     : `
                         <p>
                             <b>Champion:</b>
-                            ${champion ? getFlag(champion) : "🌍"}
-                            ${esc(champion || "To be decided")}
-                        </p>
-                    `
+                            ${
+                                championText === "Series Drawn"
+                                ? "🤝 Series Drawn"
+                                : `${getFlag(championText)} ${esc(championText)}`
+                            }
+                        </p>      
                 }
             </div>
         `;
